@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var inflect = require('inflected');
 
 var Adapter = function(instanceSchema) {
-  mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost/api');
+  mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost/phobos');
 
   var Adapter = {};
   var Schemas = (typeof instanceSchema === 'function') ? instanceSchema(mongoose) : {};
