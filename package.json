@@ -1,0 +1,21 @@
+{
+  "name": "phobosjs",
+  "version": "0.0.0",
+  "description": "A small JSON API framework for Mongoose and Express that takes all the annoyance of middleware out of your hands",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mike Timofiiv (http://fiiv.io)",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.13.1",
+    "cors": "^2.7.1",
+    "express": "^4.13.0",
+    "inflected": "^1.1.6",
+    "jsonwebtoken": "^5.0.2",
+    "mongoose": "^4.0.6",
+    "morgan": "^1.6.0",
+    "response-time": "^2.3.1"
+  }
+}
