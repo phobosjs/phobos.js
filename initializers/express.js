@@ -14,7 +14,7 @@ var Server = function(express) {
   server.use(responseTime());
 
   server.use(cors({
-    methods: ['GET', 'POST', 'OPTIONS', 'DELETE', 'PATCH', 'UPDATE'],
+    methods: ['GET', 'POST', 'OPTIONS', 'DELETE', 'PATCH', 'UPDATE', 'PUT'],
     credentials: true,
     allowedHeaders: ['Authorization', 'Access-Control-Allow-Credentials', 'Accept', 'Content-Type'],
     origin: true
