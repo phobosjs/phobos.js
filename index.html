@@ -116,7 +116,7 @@
             <h2>How</h2>
           </div>
 
-          <div class="alert alert-warning" role="alert">Note that these documents may be slightly incomplete and/or out of date as Phobos.js is currently in a very early staged alpha.</div>
+          <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-triangle"></i> Note that these documents may be slightly incomplete and/or out of date as Phobos.js is currently in a very early staged alpha.</div>
 
           <h3>The main application file</h3>
           <p>Here, we initialize the framework, which takes care of Mongo and Express for you.</p>
@@ -137,6 +137,52 @@
           <p>This is where you define what each RESTful route does, and which will be made available.</p>
 
           <script src="https://gist.github.com/mtimofiiv/757ac6a02f2420cc9911.js?file=user_controller.js"></script>
+
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="page-header">
+            <h2>What Phobos.js does not include</h2>
+          </div>
+
+          <p>This is not a kitchen sink, it's an abstraction layer. So, it:</p>
+
+          <ul>
+
+            <li>Does not handle authentication besides bearer tokens - you can implement this yourself using an excellent library like <a href="http://passportjs.org">Passport</a>. Another words, <strong>it deals with tokens but how your user aquires the token is up to you</strong>.</li>
+
+            <li>Is not fully battle tested yet, so enter at your own risk. It is stable, but the features are poorly documented (sorry, got a lot going on right now!).</li>
+
+            <li>Has not yet been tested with ES6.</li>
+
+            <li>Has not yet been tested but should work with <a href="https://iojs.org/en/index.html">io.js</a>.</li>
+
+          </ul>
+
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="page-header">
+            <h2>Roadmap</h2>
+          </div>
+
+          <p>What is currently on the docket to make an appearance next?</p>
+
+          <ul>
+
+            <li>Bearer token customization</li>
+            <li>A test suite</li>
+            <li>An application generator to make bootstrapping easier</li>
+            <li>Docs, docs, docs...</li>
+            <li>Something I've missed? Leave me an <a href="https://github.com/fiiv/phobos.js/issues">issue</a> or, even better, a <a href="https://github.com/fiiv/phobos.js/pulls#fork-destination-box">pull request</a></li>
+
+          </ul>
 
         </div>
 
