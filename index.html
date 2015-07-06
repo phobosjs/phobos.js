@@ -6,15 +6,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>phobos.js</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="http://fonts.googleapis.com/css?family=Oswald:400,700,300" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
   <body>
-    <h1>Phobos.js (docs coming soon)</h1>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <nav class="navbar navbar-default">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <!--<a class="navbar-brand" href="/"><i class="fa fa-code"></i></a>-->
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+          <ul class="nav navbar-nav navbar-right">
+            <!--<li><a href="#">Link</a></li>-->
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="jumbotron">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <h1 class="text-center">phobos.js</h1>
+            <p>phobos.js allows you to quickly put together a JSON API for use with your front-end applications. It works with familiar, popular open-source modules to give you a rapid head start to building otherwise complex components.</p>
+
+            <p class="text-center">
+              <a class="btn btn-lg btn-default" href="https://github.com/fiiv/phobos.js" role="button"><i class="fa fa-github"></i> View on Github</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="page-header">
+            <h2>Getting Started</h2>
+          </div>
+
+          <p class="lead">Getting started is simple:</p>
+
+          <p><code>npm install --save phobosjs</code></p>
+
+          <p class="lead">After that, <code>phobosjs</code> can be included in your application by using:</p>
+
+          <p><code>var Phobos = require('phobosjs');</code></p>
+
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="page-header">
+            <h2>What exactly is it?</h2>
+          </div>
+
+          <p>Phobos.js is a framework built on top of <a href="#">Express.js</a> and <a href="#">Mongoose</a> that provides a layer of abstraction for running complex, permissions-driven APIs for Node.js API servers.</p>
+
+          <p>Basically, it takes the idea of RESTful resources, mass assignment, finely-grained permissions and bearer token auth and applies it all in a single package, meaning you don't have to. The basic building block of Phobos.js is the <strong>controller</strong>, something already familiar to you (if you're interested in something like Phobos.js, you've most likely built a few of these).</p>
+
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="page-header">
+            <h2>Why / When would you use it?</h2>
+          </div>
+
+          <p>You may want to use Phobos.js if:</p>
+
+          <ul>
+
+            <li>If you need to create a JSON API where you need to clearly lay out RESTful resources and don't want to create a million routes.</li>
+
+            <li>You are creating an API where <a href="https://tools.ietf.org/html/rfc6750">Bearer tokens</a> are to be the main authentication mechanism, popularly used in auth frameworks for popular front-end tools like Ember.js, Angular, etc.</li>
+
+            <li>You want to grant permissions to users to perform reading and CRUD operations on your resources and want to organize these in a neat and concise way.</li>
+
+          </ul>
+
+          <p>Most importantly, Phobos.js is here to abstract a lot of the boilerplate code you may have to write to make these things happen. Personally, I built this once for a project, and found that instead of redoing it each time, I wanted to make a module out of it for simplification and maintainability.</p>
+
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="page-header">
+            <h2>How</h2>
+          </div>
+
+          <p class="text-center">Coming soon...</p>
+
+        </div>
+
+      </div>
+
+  </div>
+
+    <footer class="jumbotron">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <p class="text-center">Made with <i class="fa fa-fw fa-heart"></i> in Amsterdam via <a href="http://fiiv.io" class="link">@fiiv</a></p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
   </body>
 </html>
