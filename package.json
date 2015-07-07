@@ -11,7 +11,7 @@
   },
   "author": "Mike Timofiiv (http://fiiv.io)",
   "license": "MIT",
-  "dependencies": {
+  "peerDependencies": {
     "body-parser": "^1.13.1",
     "cors": "^2.7.1",
     "express": "^4.13.0",
