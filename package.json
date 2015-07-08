@@ -21,7 +21,7 @@
     "morgan": "1.x",
     "response-time": "2.x"
   },
-  "homepage": "https://github.com/fiiv/phobos.js",
+  "homepage": "http://phobos.fiiv.io",
   "files": [
     "LICENSE",
     "README.md",
