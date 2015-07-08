@@ -1,6 +1,6 @@
 {
   "name": "phobosjs",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A small JSON API framework for Mongoose and Express that takes all the annoyance of middleware out of your hands",
   "main": "index.js",
   "scripts": {
@@ -21,7 +21,7 @@
     "morgan": "1.x",
     "response-time": "2.x"
   },
-  "homepage": "https://github.com/fiiv/phobos.js",
+  "homepage": "http://phobos.fiiv.io",
   "files": [
     "LICENSE",
     "README.md",
