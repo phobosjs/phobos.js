@@ -37,3 +37,7 @@ footer.jumbotron {
 .jumbotron .link {
   color: rgb(237, 206, 152);
 }
+
+.space-me {
+  margin: 50px 0;
+}
