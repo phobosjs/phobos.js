@@ -1,10 +1,9 @@
 {
   "name": "phobosjs",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "A small JSON API framework for Mongoose and Express that takes all the annoyance of middleware out of your hands",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/fiiv/phobos.js.git"
@@ -28,5 +27,8 @@
     "index.js",
     "lib",
     "initializers"
-  ]
+  ],
+  "dependencies": {
+    "method-override": "^2.3.4"
+  }
 }
