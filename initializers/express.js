@@ -10,7 +10,7 @@ var Server = function(express) {
   var server = express();
 
   server.use(bodyParser.text());
-  server.use(bodyParser.json());
+  server.use(bodyParser.json({ limit: '5MB' }));
   server.use(morgan('combined'));
   server.use(responseTime());
   server.use(methodOverride());
