@@ -27,6 +27,11 @@
     "README.md",
     "index.js",
     "lib",
+    "middleware",
     "initializers"
-  ]
+  ],
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "mocha": "^2.3.0"
+  }
 }
