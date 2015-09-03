@@ -28,5 +28,8 @@
     "index.js",
     "lib",
     "initializers"
-  ]
+  ],
+  "dependencies": {
+    "mongo-express-query-params": "0.0.2"
+  }
 }
