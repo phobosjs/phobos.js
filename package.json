@@ -1,6 +1,6 @@
 {
   "name": "phobosjs",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "A small JSON API framework for Mongoose and Express that takes all the annoyance of middleware out of your hands",
   "main": "index.js",
   "scripts": {},
@@ -28,5 +28,8 @@
     "index.js",
     "lib",
     "initializers"
-  ]
+  ],
+  "dependencies": {
+    "mongo-express-query-params": "0.0.2"
+  }
 }
