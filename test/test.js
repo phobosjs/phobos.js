@@ -3,25 +3,23 @@
 var expect = require('chai').expect;
 
 var Phobos = require('../index');
-var DS = Phobos.addSchema(require('./support/sample_schema'));
-Phobos.scopeCarrier('User', 'scope');
-Phobos.addScopeManifest(require('./support/sample_scope'));
-Phobos.addController(require('./support/sample_controller'));
+var Instance = new Phobos();
 
-describe('Schemas', function() {
+describe('Phobos object instantiates its stack', function() {
 
-  it('#addSchema properly creates Mongoose models', function() {
-    expect(DS).to.have.property('User');
-    expect(DS).to.have.property('Task');
+  it('', function() {
+    expect(Instance).to.have.property('_options');
   });
 
 });
 
-describe('Controllers', function() {
+describe('User configuration and launch', function() {
+  var Instance = new Phobos({
+    bearerTokenSignature: 'q34of8gerfhgo438egrs'
+  });
 
-  it('#addSchema properly creates Mongoose models', function() {
-    expect(DS).to.have.property('User');
-    expect(DS).to.have.property('Task');
+  it('#start()', function() {
+    expect(Instance.start()).to.not.equal(false);
   });
 
 });
