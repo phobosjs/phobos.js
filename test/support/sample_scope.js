@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
 
   // Each object corresponds to a schema/resource/controller

@@ -33,7 +33,7 @@
   "devDependencies": {
     "chai": "^3.2.0",
     "mocha": "^2.3.0",
-    "node-mocks-http": "^1.4.3"
+    "node-mocks-http": "mtimofiiv/node-mocks-http"
   },
   "dependencies": {
     "express-query-params": "^0.1.1"

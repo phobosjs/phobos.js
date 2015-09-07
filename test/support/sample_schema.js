@@ -1,3 +1,5 @@
+'use strict';
+
 // We create a function that takes a parameter for the Mongoose library
 module.exports = function(mongoose) {
   var Schema = mongoose.Schema;
