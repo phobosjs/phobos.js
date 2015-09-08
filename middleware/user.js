@@ -1,17 +1,23 @@
 'use strict';
 
-module.exports = function(DS) {
-  return function(req, res, next) {
-    if (!req.bearerToken) return next();
+module.exports = {
 
-    var User = DS[Instance.scopable.model];
-    var query = User.findOne({ _id: req.bearerToken.user });
+  inject: [ 'DS' ],
 
-    query.lean().exec(function(err, user) {
-      if (err) return next(err);
+  middleware: function(DS) {
+    return function(req, res, next) {
+      if (!req.bearerToken) return next();
 
-      req.user = user;
-      return next();
-    });
+      var User = DS[req.phobos.options.scopeCarrier.model];
+      var query = User.findOne({ _id: req.bearerToken.user });
+
+      query.lean().exec(function(err, user) {
+        if (err) return next(err);
+
+        req.user = user;
+        return next();
+      });
+    }
   }
+
 };

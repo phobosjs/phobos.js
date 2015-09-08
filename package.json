@@ -33,6 +33,7 @@
   "devDependencies": {
     "chai": "^3.2.0",
     "mocha": "^2.3.0",
+    "mockgoose": "supersam654/Mockgoose",
     "node-mocks-http": "mtimofiiv/node-mocks-http"
   },
   "dependencies": {
