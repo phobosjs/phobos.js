@@ -41,7 +41,7 @@ describe('[LIBRARIES]', function() {
   describe('Middleware Loader', function() {
     var instance = new MiddlewareLoader();
 
-    it('Loads a plain middleware function', function() {
+    it('loads a plain middleware function', function() {
       var func = function(req, res, next) {
         return 'sample function';
       };
@@ -72,7 +72,7 @@ describe('[MIDDLEWARE]', function() {
   describe('Base', function() {
     var middleware = Middleware.load(require('../middleware/base'));
 
-    it('Sets per-request variables properly for a RESTful route', function() {
+    it('sets per-request variables properly for a RESTful route', function() {
       var mounted = middleware({ verb: 'users', name: 'index' }, function() {}, true);
 
       var request = httpMocks.createRequest({
@@ -100,8 +100,33 @@ describe('[MIDDLEWARE]', function() {
       });
     });
 
-    it('Sets per-request variables properly for a non-RESTful route', function() {
+    it('sets per-request variables properly for a non-RESTful route', function() {
+      var mounted = middleware({ name: 'sample', method: 'get', endpoint: 'sample' }, function() {}, false);
 
+      var request = httpMocks.createRequest({
+        route: {
+          path: '/users/sample'
+        },
+        phobos: {
+          permissions: {
+            User: {
+              '*': true
+            }
+          }
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      mounted(request, response, function(req, res, next) {
+        expect(request.controller._rest).to.be.false;
+        expect(request.controller.spec).to.have.property('method');
+        expect(request.controller.spec).to.have.property('endpoint');
+        expect(request.controller.spec).to.have.property('name');
+        expect(request.controller.action).to.be.a.function;
+        expect(request.controller.permissions).to.have.property('*');
+        expect(request.controller.model).to.equal('User');
+      });
     });
 
   });
@@ -109,7 +134,7 @@ describe('[MIDDLEWARE]', function() {
   describe('Bearer token', function() {
     var middleware = require('../middleware/bearer');
 
-    it('Properly decodes a provided bearer token to payload', function() {
+    it('properly decodes a provided bearer token to payload', function() {
       var request = httpMocks.createRequest({
         query: {
           auth_token: Bearer.generate('__test_user')
@@ -128,7 +153,7 @@ describe('[MIDDLEWARE]', function() {
       });
     });
 
-    it('In case of no token, automatically demote user to ALL (*) scope', function() {
+    it('in case of no token, automatically demote user to ALL (*) scope', function() {
       var request = httpMocks.createRequest({
         phobos: {
           options: {
@@ -151,7 +176,7 @@ describe('[MIDDLEWARE]', function() {
 
   });
 
-  describe('Identify user given bearer token', function() {
+  describe('identify user given bearer token', function() {
     Middleware.dependencies = { DS: DS };
     var middleware = Middleware.load(require('../middleware/user'));
     var user_id;
