@@ -31,6 +31,32 @@ describe('[LIBRARIES]', function() {
 
   });
 
+  describe('Middleware Loader', function() {
+    var MiddlewareLoader = new (require('../lib/middleware-loader'));
+
+    it('Loads a plain middleware function', function() {
+      var func = function(req, res, next) {
+        return 'sample function';
+      };
+
+      expect(MiddlewareLoader.load(func)()).to.equal('sample function');
+    });
+
+    it('Loads a middleware loader object with dependencies', function() {
+      MiddlewareLoader.dependencies['SampleRequirement'] = 'this sample requirement works';
+      var obj = {
+        inject: [ 'SampleRequirement' ],
+        middleware: function(injection) {
+          return function(req, res, next) {
+            return injection;
+          }
+        }
+      };
+
+      expect(MiddlewareLoader.load(obj)()).to.equal('this sample requirement works');
+    });
+  });
+
 });
 
 describe('[MIDDLEWARE]', function() {
@@ -39,7 +65,7 @@ describe('[MIDDLEWARE]', function() {
   describe('Bearer token', function() {
     var middleware = require('../middleware/bearer');
 
-    it('Properly decodes a req.query.auth_token or req.body.auth_token payload', function() {
+    it('Properly decodes a provided bearer token to payload', function() {
       var request = httpMocks.createRequest({
         query: {
           auth_token: Bearer.generate('__test_user')
@@ -58,8 +84,23 @@ describe('[MIDDLEWARE]', function() {
     });
 
     it('In case of no token, automatically demote user to ALL (*) scope', function() {
-      //middleware(request, response, next);
-      //expect();
+      var request = httpMocks.createRequest({
+        phobos: {
+          options: {
+            bearerTokenSignature: 'phobos__test'
+          },
+          controller: {
+            action: {
+              scope: [ '*' ]
+            }
+          }
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, next);
+      expect(request.bearerToken).to.be.undefined;
     });
   });
 
