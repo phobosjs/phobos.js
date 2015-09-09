@@ -242,8 +242,54 @@ describe('[MIDDLEWARE]', function() {
   });
 
   describe('Resource query', function() {
-    Middleware.dependencies = { DS: DS };
-    var middleware = Middleware.load(require('../middleware/query'));
+    var middleware = Middleware.load(require('../middleware/query-parser'));
+
+    it('adds only whitelisted search params to the query object', function() {
+      var request = httpMocks.createRequest({
+        controller: {
+          permissions: {
+            searchableBy: [ 'username' ]
+          }
+        },
+        parsedQuery: {
+          username: 'test',
+          password: 'top secret'
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function(req, res, next) {
+        expect(request.searchParams).to.not.have.property('password');
+        expect(request.searchParams).to.have.property('username');
+      });
+    });
+
+  });
+
+  describe('Query runner', function() {
+    var middleware = Middleware.load(require('../middleware/query-runner'));
+
+    it('runs the correct resource query depending on the method/endpoint', function() {
+      var request = httpMocks.createRequest({
+        controller: {
+          permissions: {
+            searchableBy: [ 'username' ]
+          }
+        },
+        parsedQuery: {
+          username: 'test',
+          password: 'top secret'
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function(req, res, next) {
+        expect(request.searchParams).to.not.have.property('password');
+        expect(request.searchParams).to.have.property('username');
+      });
+    });
 
   });
 
