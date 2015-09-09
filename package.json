@@ -39,6 +39,7 @@
     "node-mocks-http": "mtimofiiv/node-mocks-http"
   },
   "dependencies": {
-    "express-query-params": "^0.1.1"
+    "express-query-params": "^0.1.1",
+    "rsvp": "^3.1.0"
   }
 }

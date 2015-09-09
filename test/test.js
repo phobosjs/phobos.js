@@ -42,7 +42,7 @@ describe('[LIBRARIES]', function() {
     var instance = new MiddlewareLoader();
 
     it('loads a plain middleware function', function() {
-      var func = function(req, res, next) {
+      var func = function(err) {
         return 'sample function';
       };
 
@@ -54,7 +54,7 @@ describe('[LIBRARIES]', function() {
       var obj = {
         inject: [ 'SampleRequirement' ],
         middleware: function(injection) {
-          return function(req, res, next) {
+          return function(err) {
             return injection;
           }
         }
@@ -90,7 +90,7 @@ describe('[MIDDLEWARE]', function() {
 
       var response = httpMocks.createResponse();
 
-      mounted(request, response, function(req, res, next) {
+      mounted(request, response, function(err) {
         expect(request.controller._rest).to.be.true;
         expect(request.controller.spec).to.have.property('verb');
         expect(request.controller.spec).to.have.property('name');
@@ -118,7 +118,8 @@ describe('[MIDDLEWARE]', function() {
 
       var response = httpMocks.createResponse();
 
-      mounted(request, response, function(req, res, next) {
+      mounted(request, response, function(err) {
+        expect(err).to.be.undefined;
         expect(request.controller._rest).to.be.false;
         expect(request.controller.spec).to.have.property('method');
         expect(request.controller.spec).to.have.property('endpoint');
@@ -148,7 +149,8 @@ describe('[MIDDLEWARE]', function() {
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function(req, res, next) {
+      middleware(request, response, function(err) {
+        expect(err).to.be.undefined;
         expect(request.bearerToken).to.equal('__test_user');
       });
     });
@@ -169,7 +171,8 @@ describe('[MIDDLEWARE]', function() {
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function(req, res, next) {
+      middleware(request, response, function(err) {
+        expect(err).to.be.undefined;
         expect(request.bearerToken).to.be.undefined;
       });
     });
@@ -210,7 +213,8 @@ describe('[MIDDLEWARE]', function() {
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function(req, res, next) {
+      middleware(request, response, function(err) {
+        expect(err).to.be.undefined;
         expect(request.user).to.be.undefined;
       });
     });
@@ -234,7 +238,8 @@ describe('[MIDDLEWARE]', function() {
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function(req, res, next) {
+      middleware(request, response, function(err) {
+        expect(err).to.be.undefined;
         expect(request.user.username).to.equal('testie');
       });
     });
@@ -259,7 +264,8 @@ describe('[MIDDLEWARE]', function() {
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function(req, res, next) {
+      middleware(request, response, function(err) {
+        expect(err).to.be.undefined;
         expect(request.searchParams).to.not.have.property('password');
         expect(request.searchParams).to.have.property('username');
       });
@@ -268,26 +274,37 @@ describe('[MIDDLEWARE]', function() {
   });
 
   describe('Query runner', function() {
+    Middleware.dependencies = { DS: DS };
     var middleware = Middleware.load(require('../middleware/query-runner'));
+    var user_id;
 
-    it('runs the correct resource query depending on the method/endpoint', function() {
+    beforeEach(function(done) {
+      mockgoose.reset();
+
+      DS.User.create({
+        username: 'testie',
+        scope: [ 'user' ],
+        password: 'hello_world123'
+      }, function(err, user) {
+        user_id = user._id;
+        return done();
+      });
+    });
+
+    it('runs a findOne query when an ID is given in the route', function() {
       var request = httpMocks.createRequest({
         controller: {
-          permissions: {
-            searchableBy: [ 'username' ]
-          }
+          model: 'User'
         },
-        parsedQuery: {
-          username: 'test',
-          password: 'top secret'
+        params: {
+          id: user_id
         }
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function(req, res, next) {
-        expect(request.searchParams).to.not.have.property('password');
-        expect(request.searchParams).to.have.property('username');
+      middleware(request, response, function(err) {
+        expect(response).to.not.equal('sdfsdf');
       });
     });
 
