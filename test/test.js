@@ -315,6 +315,67 @@ describe('[MIDDLEWARE]', function() {
       });
     });
 
+    it('runs a find query when no ID when on index', function(done) {
+      var request = httpMocks.createRequest({
+        controller: {
+          model: 'User'
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function(err) {
+        expect(request).to.have.property('rawResources');
+        expect(request).to.have.property('rawResourcesCount');
+        expect(request.rawResources).to.be.instanceOf(Array);
+        expect(request.rawResourcesCount).to.equal(1);
+        expect(request.rawResources[0].username).to.equal('testie');
+        done();
+      });
+    });
+
+    it('searches query params on index and finds result', function(done) {
+      var request = httpMocks.createRequest({
+        controller: {
+          model: 'User'
+        },
+        searchParams: {
+          username: 'testie'
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function(err) {
+        expect(request).to.have.property('rawResources');
+        expect(request).to.have.property('rawResourcesCount');
+        expect(request.rawResources).to.be.instanceOf(Array);
+        expect(request.rawResourcesCount).to.equal(1);
+        done();
+      });
+    });
+
+    it('searches query params on index and finds 0 when no match', function(done) {
+      var request = httpMocks.createRequest({
+        controller: {
+          model: 'User'
+        },
+        searchParams: {
+          username: 'testie_poop'
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function(err) {
+        expect(request).to.have.property('rawResources');
+        expect(request).to.have.property('rawResourcesCount');
+        expect(request.rawResources).to.be.instanceOf(Array);
+        expect(request.rawResourcesCount).to.equal(0);
+        done();
+      });
+    });
+
   });
 
 });
