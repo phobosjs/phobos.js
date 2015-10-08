@@ -1,34 +1,23 @@
 'use strict';
 
-var RSVP = require('rsvp');
-
 module.exports = {
 
   inject: [ 'DS' ],
 
   middleware: function(DS) {
 
-    var lookup = function(query) {
-      return new RSVP.Promise(function(resolve, reject) {
-        query.exec(function(err, result) {
-          if (err) return reject(err);
-          return resolve(result);
-        });
-      });
-    };
-
     return function(req, res, next) {
       var Model = DS[req.controller.model];
       req.rawResources = {};
 
       if (req.params.id) {
-        var q = Model.findById(req.params.id);
+        var q = Model.findById(req.params.id).lean();
 
-        return lookup(q.lean()).then(function(result) {
+        q.exec(function(err, result) {
+          if (err) return next(err);
+
           req.rawResources = result;
           return next();
-        }).catch(function(err) {
-          return next(err);
         });
       } else if (!req.params.id && req.method === 'GET') {
         var q = Model.find(req.searchParams);

@@ -1,8 +1,13 @@
 'use strict';
 
-var expect = require('chai').expect;
+var chai = require('chai');
+
+chai.use(require('chai-as-promised'));
+
+var expect = chai.expect;
 var httpMocks = require('node-mocks-http');
 var mockgoose = require('mockgoose');
+var mongoose = require('mongoose');
 
 var Phobos = require('../index');
 var Instance = new Phobos();
@@ -10,7 +15,7 @@ var Instance = new Phobos();
 var Bearer = new (require('../lib/bearer'))('phobos__test');
 var MiddlewareLoader = require('../lib/middleware-loader');
 
-Instance.database = require('mongoose');
+Instance.database = mongoose;
 mockgoose(Instance.database);
 Instance.addSchema(require('./support/sample_schema'));
 var DS = Instance.initDb();
@@ -291,7 +296,7 @@ describe('[MIDDLEWARE]', function() {
       });
     });
 
-    it('runs a findOne query when an ID is given in the route', function() {
+    it('runs a findOne query when an ID is given in the route', function(done) {
       var request = httpMocks.createRequest({
         controller: {
           model: 'User'
@@ -304,7 +309,9 @@ describe('[MIDDLEWARE]', function() {
       var response = httpMocks.createResponse();
 
       middleware(request, response, function(err) {
-        expect(response).to.not.equal('sdfsdf');
+        expect(request).to.have.property('rawResources');
+        expect(request.rawResources.username).to.equal('testie');
+        done();
       });
     });
 
