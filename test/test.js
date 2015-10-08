@@ -378,6 +378,10 @@ describe('[MIDDLEWARE]', function() {
 
   });
 
+  describe('Scope check', function() {
+    
+  });
+
 });
 
 describe('[USER INTERFACE]', function() {
