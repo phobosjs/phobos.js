@@ -6,9 +6,17 @@
   Here we look up what scopes the given user has versus what they need. By
   default, the `*` scope is given, but if a user has other relevant ones,
   they are sifted.
-
-  Most importantly, we do an ownership check.
 */
+
+var catchScopes = function(userScopes, endpointScopes) {
+  var scopes = [];
+
+  for (var i = 0; i < endpointScopes.length; i++) {
+    if (userScopes.indexOf(endpointScopes[i]) > -1) scopes.push(endpointScopes[i]);
+  }
+
+  return scopes;
+};
 
 module.exports = {
 
@@ -16,13 +24,14 @@ module.exports = {
 
   middleware: function() {
     return function(req, res, next) {
-      req.caughtScope = '*';
+      req.caughtScope = [ '*' ];
 
       if (req.user) {
-        //var permissions = req.controller.permissions;
-        //var scopes = req.phobos.options.availableScopes;
+        var availableScopes = req.phobos.options.availableScopes;
+        var userScopes = req.user.scope;
+        var endpointScopes = req.controller.scopes;
 
-
+        req.caughtScope = catchScopes(userScopes, endpointScopes);
       }
 
       return next();

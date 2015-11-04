@@ -1,13 +1,11 @@
 'use strict';
 
 /*
-  scope-catch.js
+  ownership.js
 
-  Here we look up what scopes the given user has versus what they need. By
-  default, the `*` scope is given, but if a user has other relevant ones,
-  they are sifted.
-
-  Most importantly, we do an ownership check.
+  Most importantly, we do an ownership check. If it is indeed owned by the
+  user in question, the `owner` scope is added into the req.caughtScope for
+  use downstream
 */
 
 module.exports = {

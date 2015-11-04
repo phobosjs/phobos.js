@@ -78,7 +78,13 @@ describe('[MIDDLEWARE]', function() {
     var middleware = Middleware.load(require('../middleware/base'));
 
     it('sets per-request variables properly for a RESTful route', function() {
-      var mounted = middleware({ verb: 'users', name: 'index' }, function() {}, true);
+      var mounted = middleware({
+        verb: 'users',
+        name: 'index'
+      }, {
+        scope: [ '*' ],
+        responder: function() {}
+      }, true);
 
       var request = httpMocks.createRequest({
         route: {
@@ -106,7 +112,15 @@ describe('[MIDDLEWARE]', function() {
     });
 
     it('sets per-request variables properly for a non-RESTful route', function() {
-      var mounted = middleware({ name: 'sample', method: 'get', endpoint: 'sample' }, function() {}, false);
+      var mounted = middleware({
+        name: 'sample',
+        method: 'get',
+        endpoint: 'sample'
+
+      }, {
+        scope: [ '*' ],
+        responder: function() {}
+      }, false);
 
       var request = httpMocks.createRequest({
         route: {
@@ -408,7 +422,33 @@ describe('[MIDDLEWARE]', function() {
   describe('Scope catch', function() {
     var middleware = Middleware.load(require('../middleware/scope-catch'));
 
-    it('recognizes the owner of a resource and elevates scope to `owner`', function() {
+    it('gives the `*` scope to a non-authenticated user', function() {
+      var request = httpMocks.createRequest({
+        phobos: {
+          options: {
+            availableScopes: [ '*', 'user', 'owner', 'admin' ]
+          }
+        },
+        rawResources: {
+          _id: '12121212',
+          user: 'test_owner_user'
+        },
+        controller: {
+          scopes: [ '*', 'user' ]
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function() {
+        expect(request).to.have.property('caughtScope');
+        expect(request.caughtScope).to.be.instanceOf(Array);
+        expect(request.caughtScope).to.contain('*');
+        expect(request.caughtScope).to.not.contain('user');
+      });
+    });
+
+    it('detects `user` scope', function() {
       var request = httpMocks.createRequest({
         user: {
           _id: 'test_owner_user',
@@ -422,42 +462,19 @@ describe('[MIDDLEWARE]', function() {
         rawResources: {
           _id: '12121212',
           user: 'test_owner_user'
+        },
+        controller: {
+          scopes: [ 'user', 'owner' ]
         }
       });
 
       var response = httpMocks.createResponse();
 
       middleware(request, response, function() {
-
+        expect(request).to.have.property('caughtScope');
+        expect(request.caughtScope).to.be.instanceOf(Array);
+        expect(request.caughtScope).to.contain('user');
       });
-    });
-
-    it('detects elevated scope', function() {
-      var request = httpMocks.createRequest({
-        controller: {
-          model: 'User'
-        },
-        searchParams: {
-          username: 'testie_poop'
-        }
-      });
-
-      var response = httpMocks.createResponse();
-
-    });
-
-    it('leaves the scope at `*` when the user has no appropriate scope', function() {
-      var request = httpMocks.createRequest({
-        controller: {
-          model: 'User'
-        },
-        searchParams: {
-          username: 'testie_poop'
-        }
-      });
-
-      var response = httpMocks.createResponse();
-
     });
 
   });

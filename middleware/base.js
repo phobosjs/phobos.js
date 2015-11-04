@@ -16,9 +16,10 @@ module.exports = function baseMiddleware(spec, action, rest) {
 
     req.controller = {
       spec: spec,
-      action: action,
+      action: action.responder,
       permissions: req.phobos.permissions[resource],
       model: resource,
+      scopes: action.scope,
       _rest: rest
     };
 
