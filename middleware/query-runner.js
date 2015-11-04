@@ -1,5 +1,12 @@
 'use strict';
 
+/*
+  query-runner.js
+
+  This is where we query the database for the actual resource(s) and apply any
+  default constraints that we might need to.
+*/
+
 module.exports = {
 
   inject: [ 'DS' ],

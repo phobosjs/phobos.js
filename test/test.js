@@ -184,7 +184,7 @@ describe('[MIDDLEWARE]', function() {
 
   });
 
-  describe('identify user given bearer token', function() {
+  describe('Identification of user', function() {
     Middleware.dependencies = { DS: DS };
     var middleware = Middleware.load(require('../middleware/user'));
     var user_id;
@@ -379,7 +379,11 @@ describe('[MIDDLEWARE]', function() {
   });
 
   describe('Scope check', function() {
-    
+
+  });
+
+  describe('Allowed fields filtration', function() {
+
   });
 
 });

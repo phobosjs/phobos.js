@@ -1,5 +1,12 @@
 'use strict';
 
+/*
+  bearer.js
+
+  If a bearer token is provided as part of the request, Phobos needs to decode
+  and verify it.
+*/
+
 var BearerLib = require('../lib/bearer');
 
 module.exports = function(req, res, next) {

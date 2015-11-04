@@ -1,5 +1,13 @@
 'use strict';
 
+/*
+  base.js
+
+  The middleware stack relies on per-request variables to figure out what to do.
+  This module is therefore run first, and sets some of these depending on what
+  has been requested.
+*/
+
 var Inflector = require('inflected');
 
 module.exports = function baseMiddleware(spec, action, rest) {

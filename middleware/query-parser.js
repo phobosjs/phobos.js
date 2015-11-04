@@ -1,5 +1,12 @@
 'use strict';
 
+/*
+  query-parser.js
+
+  On a RESTful route, a database resource should be associated with it. Here,
+  we parse the potential query logic for the querying of the resource.
+*/
+
 module.exports = {
 
   inject: [ ],

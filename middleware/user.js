@@ -1,5 +1,12 @@
 'use strict';
 
+/*
+  user.js
+
+  Since we have a bearer token, we should figure out what user it belongs to and
+  set that user to the req.user object for use downstream.
+*/
+
 module.exports = {
 
   inject: [ 'DS' ],
