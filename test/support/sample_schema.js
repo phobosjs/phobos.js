@@ -20,7 +20,7 @@ module.exports = function(mongoose) {
   Schemas.Task = new Schema({
     title: { type: String, required: true },
     completed: { type: Boolean, default: false, required: true },
-    user: { type: ObjectId, ref: 'User' },
+    owner: { type: ObjectId, ref: 'User' },
     updatedAt: { type: Date, default: new Date() }
   });
 

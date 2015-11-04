@@ -278,6 +278,33 @@ describe('[MIDDLEWARE]', function() {
 
   });
 
+  describe('Includable parser', function() {
+    Middleware.dependencies = { DS: DS };
+    var middleware = Middleware.load(require('../middleware/includables'));
+
+    var request = httpMocks.createRequest({
+      controller: {
+        model: 'Task'
+      },
+      query: {
+        include: 'owner'
+      }
+    });
+
+    var response = httpMocks.createResponse();
+
+    it('detects includable objects', function() {
+      middleware(request, response, function() {
+        expect(request).to.have.property('includeRelations');
+        expect(request.includeRelations).to.be.instanceOf(Array);
+        expect(request.includeRelations.length).to.equal(1);
+        expect(request.includeRelations[0].model).to.equal('User');
+        expect(request.includeRelations[0].field).to.equal('owner');
+      });
+    });
+
+  });
+
   describe('Query runner', function() {
     Middleware.dependencies = { DS: DS };
     var middleware = Middleware.load(require('../middleware/query-runner'));
