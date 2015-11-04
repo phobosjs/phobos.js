@@ -17,41 +17,43 @@ module.exports = {
       var Model = DS[req.controller.model];
       req.rawResources = {};
 
+      var query = false;
+      var count = false;
+
       if (req.params.id) {
-        var q = Model.findById(req.params.id).lean();
-
-        q.exec(function(err, result) {
-          if (err) return next(err);
-
-          req.rawResources = result;
-          return next();
-        });
+        query = Model.findById(req.params.id).lean();
       } else if (!req.params.id && req.method === 'GET') {
-        var q = Model.find(req.searchParams);
-        var count = Model.count(req.searchParams);
+        query = Model.find(req.searchParams);
+        count = Model.count(req.searchParams);
 
         if (req.query.page) {
           var perPage = parseInt(req.query.perPage) || 20;
-          q.skip((parseInt(req.query.page) * perPage) - perPage);
-          q.limit(perPage);
+
+          query = query.skip((parseInt(req.query.page) * perPage) - perPage);
+          query = query.limit(perPage);
         } else {
-          q.limit(req.query.limit || 20);
+          query = query.limit(req.query.limit || 20);
         }
 
-        q.lean().exec(function(err, result) {
-          if (err) return next(err);
-
-          count.lean().exec(function(err, counter) {
-            if (err) return next(err);
-
-            req.rawResources = result;
-            req.rawResourcesCount = counter;
-            return next();
-          });
-        });
+        query = query.lean();
       } else {
         return next();
       }
+
+      query.exec(function(err, result) {
+        if (err) return next(err);
+
+        req.rawResources = result;
+
+        if (!count) return next();
+
+        count.exec(function(err, counter) {
+          if (err) return next(err);
+
+          req.rawResourcesCount = counter;
+          return next();
+        });
+      });
     }
 
   }
