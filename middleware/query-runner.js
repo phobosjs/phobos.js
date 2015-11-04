@@ -40,6 +40,14 @@ module.exports = {
         return next();
       }
 
+      if (req.includeRelations && req.includeRelations.length > 0) {
+        for (var i = 0; i < req.includeRelations.length; i++) {
+          var relation = req.includeRelations[i];
+
+          query = query.populate(relation.field);
+        }
+      }
+
       query.exec(function(err, result) {
         if (err) return next(err);
 
