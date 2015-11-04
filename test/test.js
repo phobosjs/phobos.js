@@ -405,7 +405,64 @@ describe('[MIDDLEWARE]', function() {
 
   });
 
-  describe('Scope check', function() {
+  describe('Scope catch', function() {
+    var middleware = Middleware.load(require('../middleware/scope-catch'));
+
+    it('recognizes the owner of a resource and elevates scope to `owner`', function() {
+      var request = httpMocks.createRequest({
+        user: {
+          _id: 'test_owner_user',
+          scope: [ 'user' ]
+        },
+        phobos: {
+          options: {
+            availableScopes: [ '*', 'user', 'owner', 'admin' ]
+          }
+        },
+        rawResources: {
+          _id: '12121212',
+          user: 'test_owner_user'
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function() {
+
+      });
+    });
+
+    it('detects elevated scope', function() {
+      var request = httpMocks.createRequest({
+        controller: {
+          model: 'User'
+        },
+        searchParams: {
+          username: 'testie_poop'
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+    });
+
+    it('leaves the scope at `*` when the user has no appropriate scope', function() {
+      var request = httpMocks.createRequest({
+        controller: {
+          model: 'User'
+        },
+        searchParams: {
+          username: 'testie_poop'
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+    });
+
+  });
+
+  describe('Apply scope', function() {
 
   });
 

@@ -52,7 +52,7 @@ module.exports = {
 
     searchableBy: [],
 
-    owners: [ 'user' ]
+    owners: [ 'owner' ]
 
   }
 
