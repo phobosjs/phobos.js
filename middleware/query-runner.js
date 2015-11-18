@@ -35,7 +35,7 @@ module.exports = {
           query = query.limit(req.query.limit || 20);
         }
 
-        query = query.lean();
+        if (req.method === 'GET') query = query.lean();
       } else {
         return next();
       }
