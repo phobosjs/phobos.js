@@ -479,6 +479,62 @@ describe('[MIDDLEWARE]', function() {
 
   });
 
+  describe('Ownership', function() {
+    var middleware = Middleware.load(require('../middleware/ownership'));
+
+    it('correctly grants ownership', function() {
+      var response = httpMocks.createResponse();
+
+      var request = httpMocks.createRequest({
+        rawResources: {
+          _id: '12121212',
+          owner: 'test_owner_user'
+        },
+        user: {
+          _id: 'test_owner_user'
+        },
+        controller: {
+          permissions: {
+            owners: [ 'owner' ]
+          }
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function() {
+        expect(request).to.have.property('ownership');
+        expect(request.ownership).to.be.true;
+      });
+    });
+
+    it('correctly denies ownership', function() {
+      var response = httpMocks.createResponse();
+
+      var request = httpMocks.createRequest({
+        rawResources: {
+          _id: '12121212',
+          owner: 'not_test_owner_user'
+        },
+        user: {
+          _id: 'test_owner_user'
+        },
+        controller: {
+          permissions: {
+            owners: [ 'owner' ]
+          }
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function() {
+        expect(request).to.have.property('ownership');
+        expect(request.ownership).to.not.be.true;
+      });
+    });
+  });
+
   describe('Apply scope', function() {
 
   });
