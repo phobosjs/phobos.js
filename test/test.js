@@ -601,6 +601,30 @@ describe('[MIDDLEWARE]', function() {
         expect(request.appliedScope).to.equal('admin');
       });
     });
+
+    it('a non-resourceful route gets the topmost scope from the user', function() {
+      var request = httpMocks.createRequest({
+        caughtScope: [ '*', 'admin' ],
+        method: 'GET',
+        user: {},
+        controller: {
+          action: {
+            scope: [ '*', 'owner', 'admin' ]
+          },
+          _rest: false,
+          permissions: {
+            read: true
+          }
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function() {
+        expect(request).to.have.property('appliedScope');
+        expect(request.appliedScope).to.equal('admin');
+      });
+    });
   });
 
   describe('Allowed fields filtration', function() {
