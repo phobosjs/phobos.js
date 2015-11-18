@@ -628,7 +628,74 @@ describe('[MIDDLEWARE]', function() {
   });
 
   describe('Allowed fields filtration', function() {
+    var middleware = Middleware.load(require('../middleware/filter-fields'));
 
+    it('handles show filtration based on scopes', function() {
+      var request = httpMocks.createRequest({
+        appliedScope: [ 'admin' ],
+        method: 'GET',
+        controller: {
+          action: {
+            scope: [ '*', 'owner', 'admin' ]
+          },
+          _rest: true,
+          permissions: {
+            read: {
+              'admin': [ 'show' ]
+            }
+          }
+        },
+        rawResources: {
+          _id: '11111',
+          show: true,
+          dontShow: true
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function() {
+        expect(request).to.have.property('resource');
+        expect(request.resource).to.have.property('show');
+        expect(request.resource).to.have.property('_id');
+        expect(request.resource).to.not.have.property('dontShow');
+      });
+    });
+
+    it('handles show filtration based on scopes', function() {
+      var request = httpMocks.createRequest({
+        appliedScope: [ 'admin' ],
+        method: 'GET',
+        controller: {
+          action: {
+            scope: [ '*', 'owner', 'admin' ]
+          },
+          _rest: true,
+          permissions: {
+            read: {
+              'admin': [ 'show' ]
+            }
+          }
+        },
+        rawResources: [
+          {
+            _id: '11111',
+            show: true,
+            dontShow: true
+          }
+        ]
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function() {
+        expect(request).to.have.property('resource');
+        expect(request.resource).to.be.instanceOf(Array);
+        expect(request.resource[0]).to.have.property('show');
+        expect(request.resource[0]).to.have.property('_id');
+        expect(request.resource[0]).to.not.have.property('dontShow');
+      });
+    });
   });
 
 });
