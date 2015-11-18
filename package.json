@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/fiiv/phobos.js.git"
+    "url": "https://github.com/phobosjs/phobos.js.git"
   },
   "author": "Mike Timofiiv (http://fiiv.io)",
   "license": "MIT",
