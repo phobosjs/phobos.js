@@ -116,7 +116,6 @@ describe('[MIDDLEWARE]', function() {
         name: 'sample',
         method: 'get',
         endpoint: 'sample'
-
       }, {
         scope: [ '*' ],
         responder: function() {}
@@ -536,7 +535,72 @@ describe('[MIDDLEWARE]', function() {
   });
 
   describe('Apply scope', function() {
+    var middleware = Middleware.load(require('../middleware/apply-scope'));
 
+    it('non-elevated users always get `*`', function() {
+      var request = httpMocks.createRequest({
+        caughtScope: [ '*' ],
+        method: 'GET',
+        user: {}
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function() {
+        expect(request).to.have.property('appliedScope');
+        expect(request.appliedScope).to.equal('*');
+      });
+    });
+
+    it('owners get ownership elevated scope applied', function() {
+      var request = httpMocks.createRequest({
+        caughtScope: [ '*' ],
+        method: 'GET',
+        user: {},
+        ownership: true,
+        controller: {
+          action: {
+            scope: [ '*', 'owner' ]
+          },
+          _rest: true,
+          permissions: {
+            read: true
+          }
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function() {
+        expect(request).to.have.property('appliedScope');
+        expect(request.appliedScope).to.equal('owner');
+      });
+    });
+
+    it('a user with elevated caught scope will have that applied', function() {
+      var request = httpMocks.createRequest({
+        caughtScope: [ '*', 'admin' ],
+        method: 'GET',
+        user: {},
+        ownership: false,
+        controller: {
+          action: {
+            scope: [ '*', 'owner', 'admin' ]
+          },
+          _rest: true,
+          permissions: {
+            read: true
+          }
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function() {
+        expect(request).to.have.property('appliedScope');
+        expect(request.appliedScope).to.equal('admin');
+      });
+    });
   });
 
   describe('Allowed fields filtration', function() {
