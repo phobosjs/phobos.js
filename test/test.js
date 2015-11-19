@@ -662,7 +662,7 @@ describe('[MIDDLEWARE]', function() {
       });
     });
 
-    it('handles show filtration based on scopes', function() {
+    it('handles index filtration based on scopes', function() {
       var request = httpMocks.createRequest({
         appliedScope: [ 'admin' ],
         method: 'GET',
@@ -680,6 +680,11 @@ describe('[MIDDLEWARE]', function() {
         rawResources: [
           {
             _id: '11111',
+            show: true,
+            dontShow: true
+          },
+          {
+            _id: '22222',
             show: true,
             dontShow: true
           }
