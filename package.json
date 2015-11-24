@@ -34,14 +34,13 @@
     "initializers"
   ],
   "devDependencies": {
-    "chai": "^3.2.0",
+    "chai": "^3.4.1",
     "chai-as-promised": "^5.1.0",
-    "mocha": "^2.3.0",
-    "mockgoose": "supersam654/Mockgoose",
-    "node-mocks-http": "mtimofiiv/node-mocks-http"
+    "mocha": "^2.3.4",
+    "mockgoose": "^5.0.1",
+    "node-mocks-http": "^1.5.1"
   },
   "dependencies": {
-    "express-query-params": "^0.1.1",
-    "rsvp": "^3.1.0"
+    "express-query-params": "^0.2.0"
   }
 }
