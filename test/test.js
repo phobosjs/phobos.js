@@ -11,6 +11,7 @@ var mongoose = require('mongoose');
 
 var Phobos = require('../index');
 var Instance = new Phobos();
+var Router = require('../lib/router');
 
 var Bearer = new (require('../lib/bearer'))('phobos__test');
 var MiddlewareLoader = require('../lib/middleware-loader');
@@ -66,6 +67,19 @@ describe('[LIBRARIES]', function() {
       };
 
       expect(instance.load(obj)()).to.equal('this sample requirement works');
+    });
+  });
+
+  describe('Router', function() {
+    var instance = new Router(Instance.server);
+
+    it('Creates a RESTful resource out of a controller', function() {
+      instance.addController(require('./support/sample_controller'));
+      instance.mount();
+
+      expect(instance._express._router.stack).to.be.instanceOf(Array);
+      expect(instance._express._router.stack[2].route.path).to.equal('/users/');
+      expect(instance._express._router.stack[2].route.methods).to.have.property('get');
     });
   });
 
