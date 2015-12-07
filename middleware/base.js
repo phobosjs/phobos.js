@@ -11,7 +11,7 @@
 var Inflector = require('inflected');
 
 module.exports = function baseMiddleware(spec, action, rest) {
-  return function(req, res, next) {
+  return function base(req, res, next) {
     var resource = Inflector.singularize(Inflector.camelize(req.route.path.split('/')[1]));
 
     req.controller = {

@@ -11,9 +11,9 @@ module.exports = {
 
   inject: [ ],
 
-  middleware: function() {
+  middleware: function queryParserMiddleware() {
 
-    return function(req, res, next) {
+    return function queryParser(req, res, next) {
       req.searchParams = {};
 
       if (!req.params.id && req.controller.permissions.searchableBy) {

@@ -11,8 +11,8 @@ module.exports = {
 
   inject: [ 'DS' ],
 
-  middleware: function(DS) {
-    return function(req, res, next) {
+  middleware: function includablesMiddleware(DS) {
+    return function includables(req, res, next) {
       req.includeRelations = [];
 
       if (!req.query.include || req.query.include === '') return next();

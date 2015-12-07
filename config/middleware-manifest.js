@@ -19,6 +19,7 @@ var MiddlewareStack = [
   'scope-catch',
   'ownership',
   'apply-scope',
+  'mutate',
   'filter-fields'
 ];
 

@@ -25,8 +25,8 @@ module.exports = {
 
   inject: [  ],
 
-  middleware: function() {
-    return function(req, res, next) {
+  middleware: function scopeCatchMiddlware() {
+    return function scopeCatch(req, res, next) {
       req.caughtScope = [ '*' ];
 
       if (req.user) {

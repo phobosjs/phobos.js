@@ -6,9 +6,6 @@ chai.use(require('chai-as-promised'));
 
 var expect = chai.expect;
 var httpMocks = require('node-mocks-http');
-var mockgoose = require('mockgoose');
-var mongoose = require('mongoose');
-
 var Phobos = require('../index');
 var Instance = new Phobos();
 var Router = require('../lib/router');
@@ -16,10 +13,22 @@ var Router = require('../lib/router');
 var Bearer = new (require('../lib/bearer'))('phobos__test');
 var MiddlewareLoader = require('../lib/middleware-loader');
 
-Instance.database = mongoose;
-mockgoose(Instance.database);
 Instance.addSchema(require('./support/sample_schema'));
+
 var DS = Instance.initDb();
+
+var connection = Instance.database.connection;
+
+before(function(done) {
+  connection.on('open', function() {
+    connection.db.dropDatabase();
+    done();
+  });
+});
+
+after(function(done) {
+  connection.close(done);
+});
 
 describe('[BASE]', function() {
 
@@ -45,7 +54,17 @@ describe('[LIBRARIES]', function() {
   });
 
   describe('Middleware Loader', function() {
-    var instance = new MiddlewareLoader();
+    var instance;
+
+    beforeEach(function(done) {
+      instance = new MiddlewareLoader({ test: 'foobar' });
+      done();
+    });
+
+    afterEach(function(done) {
+      instance = undefined;
+      done();
+    });
 
     it('loads a plain middleware function', function() {
       var func = function(err) {
@@ -71,22 +90,35 @@ describe('[LIBRARIES]', function() {
   });
 
   describe('Router', function() {
-    var instance = new Router(Instance.server);
+    var instance = new Router(Instance.server, DS);
 
     it('Creates a RESTful resource out of a controller', function() {
       instance.addController(require('./support/sample_controller'));
       instance.mount();
 
       expect(instance._express._router.stack).to.be.instanceOf(Array);
+
       expect(instance._express._router.stack[2].route.path).to.equal('/users/');
       expect(instance._express._router.stack[2].route.methods).to.have.property('get');
+
+      expect(instance._express._router.stack[3].route.path).to.equal('/users/:id');
+      expect(instance._express._router.stack[3].route.methods).to.have.property('get');
+
+      expect(instance._express._router.stack[4].route.path).to.equal('/users/');
+      expect(instance._express._router.stack[4].route.methods).to.have.property('post');
+
+      expect(instance._express._router.stack[5].route.path).to.equal('/users/:id');
+      expect(instance._express._router.stack[5].route.methods).to.have.property('put');
+
+      expect(instance._express._router.stack[6].route.path).to.equal('/users/:id');
+      expect(instance._express._router.stack[6].route.methods).to.have.property('delete');
     });
   });
 
 });
 
 describe('[MIDDLEWARE]', function() {
-  var Middleware = new MiddlewareLoader();
+  var Middleware = new MiddlewareLoader({ DS: DS });
 
   describe('Base', function() {
     var middleware = Middleware.load(require('../middleware/base'));
@@ -195,9 +227,7 @@ describe('[MIDDLEWARE]', function() {
           }
         },
         controller: {
-          action: {
-            scope: [ '*' ]
-          }
+          scopes: [ '*' ]
         }
       });
 
@@ -212,20 +242,19 @@ describe('[MIDDLEWARE]', function() {
   });
 
   describe('Identification of user', function() {
-    Middleware.dependencies = { DS: DS };
     var middleware = Middleware.load(require('../middleware/user'));
     var user_id;
 
     beforeEach(function(done) {
-      mockgoose.reset();
-
-      DS.User.create({
-        username: 'testie',
-        scope: [ 'user' ],
-        password: 'hello_world123'
-      }, function(err, user) {
-        user_id = user._id;
-        return done();
+      DS.User.remove({}, function(err) {
+        DS.User.create({
+          username: 'testie',
+          scope: [ 'user' ],
+          password: 'hello_world123'
+        }, function(err, user) {
+          user_id = user._id;
+          return done();
+        });
       });
     });
 
@@ -237,9 +266,7 @@ describe('[MIDDLEWARE]', function() {
           }
         },
         controller: {
-          action: {
-            scope: [ '*' ]
-          }
+          scopes: [ '*' ]
         }
       });
 
@@ -259,9 +286,7 @@ describe('[MIDDLEWARE]', function() {
           }
         },
         controller: {
-          action: {
-            scope: [ '*' ]
-          }
+          scopes: [ '*' ]
         },
         bearerToken: {
           user: user_id
@@ -272,7 +297,7 @@ describe('[MIDDLEWARE]', function() {
 
       middleware(request, response, function(err) {
         expect(err).to.be.undefined;
-        expect(request.user.username).to.equal('testie');
+        expect(request.user.username).to.equal('testieaa');
       });
     });
 
@@ -306,7 +331,6 @@ describe('[MIDDLEWARE]', function() {
   });
 
   describe('Includable parser', function() {
-    Middleware.dependencies = { DS: DS };
     var middleware = Middleware.load(require('../middleware/includables'));
 
     var request = httpMocks.createRequest({
@@ -333,20 +357,19 @@ describe('[MIDDLEWARE]', function() {
   });
 
   describe('Query runner', function() {
-    Middleware.dependencies = { DS: DS };
     var middleware = Middleware.load(require('../middleware/query-runner'));
     var user_id;
 
     beforeEach(function(done) {
-      mockgoose.reset();
-
-      DS.User.create({
-        username: 'testie',
-        scope: [ 'user' ],
-        password: 'hello_world123'
-      }, function(err, user) {
-        user_id = user._id;
-        return done();
+      DS.User.remove({}, function() {
+        DS.User.create({
+          username: 'testie',
+          scope: [ 'user' ],
+          password: 'hello_world123'
+        }, function(err, user) {
+          user_id = user._id;
+          return done();
+        });
       });
     });
 
@@ -548,6 +571,8 @@ describe('[MIDDLEWARE]', function() {
     });
   });
 
+
+
   describe('Apply scope', function() {
     var middleware = Middleware.load(require('../middleware/apply-scope'));
 
@@ -573,9 +598,7 @@ describe('[MIDDLEWARE]', function() {
         user: {},
         ownership: true,
         controller: {
-          action: {
-            scope: [ '*', 'owner' ]
-          },
+          scopes: [ '*', 'owner' ],
           _rest: true,
           permissions: {
             read: true
@@ -598,9 +621,7 @@ describe('[MIDDLEWARE]', function() {
         user: {},
         ownership: false,
         controller: {
-          action: {
-            scope: [ '*', 'owner', 'admin' ]
-          },
+          scopes: [ '*', 'owner', 'admin' ],
           _rest: true,
           permissions: {
             read: true
@@ -622,9 +643,7 @@ describe('[MIDDLEWARE]', function() {
         method: 'GET',
         user: {},
         controller: {
-          action: {
-            scope: [ '*', 'owner', 'admin' ]
-          },
+          scopes: [ '*', 'owner', 'admin' ],
           _rest: false,
           permissions: {
             read: true
@@ -649,9 +668,7 @@ describe('[MIDDLEWARE]', function() {
         appliedScope: [ 'admin' ],
         method: 'GET',
         controller: {
-          action: {
-            scope: [ '*', 'owner', 'admin' ]
-          },
+          scopes: [ '*', 'owner', 'admin' ],
           _rest: true,
           permissions: {
             read: {
@@ -681,9 +698,7 @@ describe('[MIDDLEWARE]', function() {
         appliedScope: [ 'admin' ],
         method: 'GET',
         controller: {
-          action: {
-            scope: [ '*', 'owner', 'admin' ]
-          },
+          scopes: [ '*', 'owner', 'admin' ],
           _rest: true,
           permissions: {
             read: {

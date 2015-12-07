@@ -11,8 +11,8 @@ module.exports = {
 
   inject: [ 'DS' ],
 
-  middleware: function(DS) {
-    return function(req, res, next) {
+  middleware: function userMiddleware(DS) {
+    return function user(req, res, next) {
       if (!req.bearerToken) return next();
 
       var User = DS[req.phobos.options.scopeCarrier.model];

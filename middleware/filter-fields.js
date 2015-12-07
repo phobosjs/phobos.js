@@ -10,15 +10,7 @@
   endpoints.
 */
 
-var determineRequestType = function(req) {
-  var methods = ['GET', 'POST', 'PUT', 'DELETE'];
-  var action = ['read', 'create', 'edit', 'delete'];
-  var index = methods.indexOf(req.method);
-
-  if (index === -1) return 'read';
-
-  return action[index];
-};
+var Helpers = require('../lib/helpers');
 
 var filter = function(record, allowed) {
   if (Array.isArray(allowed) && allowed.length === 0) return record;
@@ -52,11 +44,11 @@ module.exports = {
 
   inject: [  ],
 
-  middleware: function() {
-    return function(req, res, next) {
+  middleware: function filterFieldsMiddleware() {
+    return function filterFields(req, res, next) {
       if (!req.controller._rest) return next();
 
-      var requestType = determineRequestType(req);
+      var requestType = Helpers.determineRequestType(req);
       var permissions = req.controller.permissions[requestType];
       var allowed = getFields(permissions, req.appliedScope);
 

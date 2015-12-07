@@ -11,9 +11,9 @@ module.exports = {
 
   inject: [ 'DS' ],
 
-  middleware: function(DS) {
+  middleware: function queryRunnerMiddleware(DS) {
 
-    return function(req, res, next) {
+    return function queryRunner(req, res, next) {
       var Model = DS[req.controller.model];
       req.rawResources = {};
 

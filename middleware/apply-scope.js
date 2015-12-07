@@ -11,29 +11,7 @@
   user.
 */
 
-var siftPermissionMatrix = function(matrix, scopes) {
-  if (matrix === true) return scopes[scopes.length - 1];
-  if (matrix === false) return matrix;
-  if (typeof matrix !== 'object' || Object.keys(matrix).length === 0) return false;
-
-  var grant = false;
-
-  for (var i = 0; i < scopes.length; i++) {
-    if (matrix[scopes[i]]) grant = scopes[i];
-  }
-
-  return grant;
-};
-
-var determineRequestType = function(req) {
-  var methods = ['GET', 'POST', 'PUT', 'DELETE'];
-  var action = ['read', 'create', 'edit', 'delete'];
-  var index = methods.indexOf(req.method);
-
-  if (index === -1) return 'read';
-
-  return action[index];
-};
+var Helpers = require('../lib/helpers');
 
 var getIndex = function(arr, find) {
   var index = arr.indexOf(find);
@@ -44,27 +22,23 @@ module.exports = {
 
   inject: [  ],
 
-  middleware: function() {
-    return function(req, res, next) {
+  middleware: function applyScopeMiddleware() {
+    return function applyScope(req, res, next) {
       req.appliedScope = '*';
 
       if (!req.caughtScope || !Array.isArray(req.caughtScope)) return next();
-      if (req.caughtScope.join() === '*' && !req.ownership) return next();
       if (!req.user) return next();
+      if (req.caughtScope.join() === '*' && !req.ownership) return next();
 
-      var ownerLevel = getIndex(req.controller.action.scope, 'owner');
-      var allLevel = getIndex(req.controller.action.scope, '*');
-      var elevatedScopes = req.controller.action.scope.slice(allLevel).slice(ownerLevel);
-
-      if (req.ownership && ownerLevel > -1) {
-        req.appliedScope = 'owner';
-      }
+      var ownerLevel = getIndex(req.controller.scopes, 'owner');
+      var allLevel = getIndex(req.controller.scopes, '*');
+      var elevatedScopes = req.controller.scopes.slice(allLevel).slice(ownerLevel);
 
       if (elevatedScopes.length > 0 && req.caughtScope.length > 1) {
         if (req.controller._rest) {
-          var requestType = determineRequestType(req);
+          var requestType = Helpers.determineRequestType(req);
           var permissions = req.controller.permissions[requestType] ? req.controller.permissions[requestType] : false;
-          var sift = siftPermissionMatrix(permissions, elevatedScopes);
+          var sift = Helpers.siftPermissionMatrix(permissions, elevatedScopes);
 
           if (sift) req.appliedScope = sift;
         } else {
@@ -72,8 +46,14 @@ module.exports = {
         }
       }
 
-      if (req.controller.action.scope.indexOf(req.appliedScope) === -1) {
-        return next({ code: 401 });
+      if (req.controller.scopes.join() === '*') {
+        if (req.user.scope.length > 1) {
+          req.appliedScope = req.user.scope[req.user.scope.length - 1];
+        }
+      }
+
+      if (req.ownership && req.appliedScope === '*') {
+        req.appliedScope = 'owner';
       }
 
       return next();

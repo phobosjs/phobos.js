@@ -10,8 +10,7 @@ var queryParams = require('express-query-params');
 module.exports = {
 
   bodyParserText: {
-    plugin: bodyParser.text,
-    opts: null
+    plugin: bodyParser.text
   },
 
   bodyParserJson: {
@@ -25,13 +24,11 @@ module.exports = {
   },
 
   responseTime: {
-    plugin: responseTime,
-    opts: null,
+    plugin: responseTime
   },
 
   methodOverride: {
-    plugin: methodOverride,
-    opts: null
+    plugin: methodOverride
   },
 
   cors: {
@@ -45,8 +42,7 @@ module.exports = {
   },
 
   queryParams: {
-    plugin: queryParams,
-    opts: {}
+    plugin: queryParams
   }
 
 };

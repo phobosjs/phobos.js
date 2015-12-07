@@ -12,8 +12,8 @@ module.exports = {
 
   inject: [  ],
 
-  middleware: function() {
-    return function(req, res, next) {
+  middleware: function ownershipMiddleware() {
+    return function ownership(req, res, next) {
       req.ownership = false;
 
       if (!req.user) return next();
