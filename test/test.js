@@ -558,8 +558,6 @@ describe('[MIDDLEWARE]', function() {
     });
   });
 
-
-
   describe('Apply scope', function() {
     var middleware = Middleware.load(require('../middleware/apply-scope'));
 
@@ -643,6 +641,172 @@ describe('[MIDDLEWARE]', function() {
       middleware(request, response, function() {
         expect(request).to.have.property('appliedScope');
         expect(request.appliedScope).to.equal('admin');
+      });
+    });
+  });
+
+  describe('Mutation', function() {
+    var middleware = Middleware.load(require('../middleware/mutate'));
+    var resource;
+
+    beforeEach(function(done) {
+      DS.User.remove({}, function() {
+        DS.User.create({
+          username: 'testie_mcfly',
+          scope: [ 'user' ],
+          password: 'hello_world123'
+        }, function(err, user) {
+          resource = user;
+          return done();
+        });
+      });
+    });
+
+    it('ignores reads', function() {
+      var request = httpMocks.createRequest({
+        appliedScope: [ '*' ],
+        method: 'GET',
+        user: {},
+        ownership: false,
+        controller: {
+          scopes: [ 'owner' ],
+          _rest: true,
+          permissions: {
+            edit: { '*': false }
+          }
+        },
+        path: '/users/' + resource._id
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function(err) {
+        expect(err).to.be.undefined;
+        expect(request.mutated).to.equal(false);
+      });
+    });
+
+    it('denies a write when there is insufficient permissions', function() {
+      var request = httpMocks.createRequest({
+        appliedScope: [ '*' ],
+        method: 'PUT',
+        user: {},
+        ownership: false,
+        controller: {
+          scopes: [ 'owner' ],
+          _rest: true,
+          permissions: {
+            edit: { '*': false }
+          }
+        },
+        path: '/users/' + resource._id,
+        rawResources: resource,
+        body: {
+          user: {}
+        }
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function(err) {
+        expect(err).to.be.defined;
+        expect(err.translation).to.equal('api.error.auth.insufficient_privilege');
+      });
+    });
+
+    it('creates a resource', function(done) {
+      var request = httpMocks.createRequest({
+        appliedScope: [ '*' ],
+        method: 'POST',
+        user: {},
+        controller: {
+          scopes: [ '*' ],
+          _rest: true,
+          permissions: {
+            create: true
+          },
+          model: 'User'
+        },
+        path: '/users',
+        body: {
+          user: {
+            username: 'new_user_mcfly',
+            password: 'hello_world123'
+          }
+        },
+        rawResources: {}
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function(err) {
+        expect(request.mutated).to.be.true;
+        expect(request.rawResources.username).to.equal('new_user_mcfly');
+
+        done();
+      });
+    });
+
+    it('updates a resource', function(done) {
+      var request = httpMocks.createRequest({
+        appliedScope: [ '*' ],
+        method: 'PUT',
+        user: {},
+        controller: {
+          scopes: [ '*' ],
+          _rest: true,
+          permissions: {
+            edit: true
+          },
+          model: 'User'
+        },
+        path: '/users/' + resource._id,
+        body: {
+          user: {
+            username: 'modified_user_mcfly'
+          }
+        },
+        rawResources: resource
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function(err) {
+        expect(request.mutated).to.be.true;
+        expect(request.rawResources.username).to.equal('modified_user_mcfly');
+
+        done();
+      });
+    });
+
+    it('deletes a resource', function(done) {
+      var _id = resource._id;
+
+      var request = httpMocks.createRequest({
+        appliedScope: [ '*' ],
+        method: 'DELETE',
+        user: {},
+        controller: {
+          scopes: [ '*' ],
+          _rest: true,
+          permissions: {
+            delete: true
+          },
+          model: 'User'
+        },
+        path: '/users/' + resource._id,
+        rawResources: resource
+      });
+
+      var response = httpMocks.createResponse();
+
+      middleware(request, response, function(err) {
+        DS.User.findOne(_id, function(err, user) {
+          expect(request.mutated).to.be.true;
+          expect(user).to.be.null;
+
+          done();
+        });
       });
     });
   });

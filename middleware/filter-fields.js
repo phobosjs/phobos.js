@@ -26,20 +26,6 @@ var filter = function(record, allowed) {
   return cleanResource;
 };
 
-var getFields = function(matrix, scope) {
-  var grant = false;
-
-  if (matrix === true) grant = [];
-
-  if (matrix.hasOwnProperty(scope) && matrix[scope] === true) {
-    grant = [];
-  } else if (matrix.hasOwnProperty(scope) && Array.isArray(matrix[scope])) {
-    grant = matrix[scope];
-  }
-
-  return grant;
-};
-
 module.exports = {
 
   inject: [  ],
@@ -50,7 +36,7 @@ module.exports = {
 
       var requestType = Helpers.determineRequestType(req);
       var permissions = req.controller.permissions[requestType];
-      var allowed = getFields(permissions, req.appliedScope);
+      var allowed = Helpers.getAllowedFields(permissions, req.appliedScope);
 
       if (Array.isArray(req.rawResources)) {
         req.resource = [];
