@@ -7,7 +7,7 @@
   controllers of the application will always be prioritized over these.
 */
 
-module.exports = function(DS, Mutation) {
+module.exports = function(DS) {
   return {
 
     index: {
@@ -15,7 +15,10 @@ module.exports = function(DS, Mutation) {
       scope: [ '*' ],
 
       responder: function(req, res, next) {
-        return res.send({ users: req.resource });
+        var envelope = {};
+        envelope[req.path.split('/')[1]] = req.resource;
+
+        return res.send(envelope);
       }
 
     },
@@ -25,7 +28,10 @@ module.exports = function(DS, Mutation) {
       scope: [ '*' ],
 
       responder: function(req, res, next) {
-        return res.send({ users: req.resource });
+        var envelope = {};
+        envelope[req.path.split('/')[1]] = req.resource;
+
+        return res.send(envelope);
       }
 
     },
@@ -35,11 +41,10 @@ module.exports = function(DS, Mutation) {
       scope: [ '*' ],
 
       responder: function(req, res, next) {
-        var User = new DS.User(req.body);
+        var envelope = {};
+        envelope[req.path.split('/')[1]] = req.resource;
 
-        User.save(function(err) {
-          return res.send(User);
-        });
+        return res.send(envelope);
       }
 
     },
@@ -49,7 +54,10 @@ module.exports = function(DS, Mutation) {
       scope: [ '*' ],
 
       responder: function(req, res, next) {
-        return res.send({ users: [] });
+        var envelope = {};
+        envelope[req.path.split('/')[1]] = req.resource;
+
+        return res.send(envelope);
       }
 
     },
@@ -59,7 +67,10 @@ module.exports = function(DS, Mutation) {
       scope: [ '*' ],
 
       responder: function(req, res, next) {
-        return res.send({ users: [] });
+        var envelope = {};
+        envelope[req.path.split('/')[1]] = req.resource;
+
+        return res.send(envelope);
       }
 
     }
