@@ -119,6 +119,20 @@ describe('[LIBRARIES]', function() {
 
 describe('[MIDDLEWARE]', function() {
   var Middleware = new MiddlewareLoader({ DS: DS });
+  var user_id;
+
+  beforeEach(function(done) {
+    DS.User.remove({}, function() {
+      DS.User.create({
+        username: 'testie_mcfly',
+        scope: [ 'user' ],
+        password: 'hello_world123'
+      }, function(err, user) {
+        user_id = user._id;
+        return done();
+      });
+    });
+  });
 
   describe('Base', function() {
     var middleware = Middleware.load(require('../middleware/base'));
@@ -243,20 +257,6 @@ describe('[MIDDLEWARE]', function() {
 
   describe('Identification of user', function() {
     var middleware = Middleware.load(require('../middleware/user'));
-    var user_id;
-
-    beforeEach(function(done) {
-      DS.User.remove({}, function(err) {
-        DS.User.create({
-          username: 'testie',
-          scope: [ 'user' ],
-          password: 'hello_world123'
-        }, function(err, user) {
-          user_id = user._id;
-          return done();
-        });
-      });
-    });
 
     it('and got to next() when there is no token', function() {
       var request = httpMocks.createRequest({
@@ -278,7 +278,7 @@ describe('[MIDDLEWARE]', function() {
       });
     });
 
-    it('and set req.user in case of a valid token', function() {
+    it('and set req.user in case of a valid token', function(done) {
       var request = httpMocks.createRequest({
         phobos: {
           options: {
@@ -297,7 +297,8 @@ describe('[MIDDLEWARE]', function() {
 
       middleware(request, response, function(err) {
         expect(err).to.be.undefined;
-        expect(request.user.username).to.equal('testieaa');
+        expect(request.user.username).to.equal('testie_mcfly');
+        done();
       });
     });
 
@@ -358,20 +359,6 @@ describe('[MIDDLEWARE]', function() {
 
   describe('Query runner', function() {
     var middleware = Middleware.load(require('../middleware/query-runner'));
-    var user_id;
-
-    beforeEach(function(done) {
-      DS.User.remove({}, function() {
-        DS.User.create({
-          username: 'testie',
-          scope: [ 'user' ],
-          password: 'hello_world123'
-        }, function(err, user) {
-          user_id = user._id;
-          return done();
-        });
-      });
-    });
 
     it('runs a findOne query when an ID is given in the route', function(done) {
       var request = httpMocks.createRequest({
@@ -387,7 +374,7 @@ describe('[MIDDLEWARE]', function() {
 
       middleware(request, response, function(err) {
         expect(request).to.have.property('rawResources');
-        expect(request.rawResources.username).to.equal('testie');
+        expect(request.rawResources.username).to.equal('testie_mcfly');
         done();
       });
     });
@@ -406,7 +393,7 @@ describe('[MIDDLEWARE]', function() {
         expect(request).to.have.property('rawResourcesCount');
         expect(request.rawResources).to.be.instanceOf(Array);
         expect(request.rawResourcesCount).to.equal(1);
-        expect(request.rawResources[0].username).to.equal('testie');
+        expect(request.rawResources[0].username).to.equal('testie_mcfly');
         done();
       });
     });
@@ -417,7 +404,7 @@ describe('[MIDDLEWARE]', function() {
           model: 'User'
         },
         searchParams: {
-          username: 'testie'
+          username: 'testie_mcfly'
         }
       });
 
