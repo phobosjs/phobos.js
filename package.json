@@ -1,12 +1,15 @@
 {
   "name": "phobosjs",
-  "version": "0.1.25",
+  "version": "1.0.0",
   "description": "A small JSON API framework for Mongoose and Express that takes all the annoyance of middleware out of your hands",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha",
+    "package:update": "npm outdated --depth=0 | grep -v Package | awk '{print $1}' | xargs -I% npm install %@latest --save"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/fiiv/phobos.js.git"
+    "url": "https://github.com/phobosjs/phobos.js.git"
   },
   "author": "Mike Timofiiv (http://fiiv.io)",
   "license": "MIT",
@@ -27,8 +30,15 @@
     "README.md",
     "index.js",
     "lib",
+    "middleware",
     "initializers"
   ],
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "chai-as-promised": "^5.1.0",
+    "mocha": "^2.3.4",
+    "node-mocks-http": "^1.5.1"
+  },
   "dependencies": {
     "express-query-params": "^0.2.0"
   }
