@@ -63,6 +63,8 @@ module.exports = {
           for (var p in diffs) req.rawResources[p] = diffs[p];
         }
 
+        console.log(req.rawResources);
+
         req.rawResources.save(function(err) {
           req.mutated = true;
           return next(err);

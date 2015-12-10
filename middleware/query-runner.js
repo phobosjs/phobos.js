@@ -21,7 +21,9 @@ module.exports = {
       var count = false;
 
       if (req.params.id) {
-        query = Model.findById(req.params.id).lean();
+        query = Model.findById(req.params.id);
+
+        if (req.method === 'GET') query = query.lean();
       } else if (!req.params.id && req.method === 'GET') {
         query = Model.find(req.searchParams);
         count = Model.count(req.searchParams);
