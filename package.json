@@ -1,6 +1,6 @@
 {
   "name": "phobosjs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A small JSON API framework for Mongoose and Express that takes all the annoyance of middleware out of your hands",
   "main": "index.js",
   "scripts": {
@@ -25,14 +25,6 @@
     "method-override": "^2.3.4"
   },
   "homepage": "http://phobos.fiiv.io",
-  "files": [
-    "LICENSE",
-    "README.md",
-    "index.js",
-    "lib",
-    "middleware",
-    "initializers"
-  ],
   "devDependencies": {
     "chai": "^3.4.1",
     "chai-as-promised": "^5.1.0",
