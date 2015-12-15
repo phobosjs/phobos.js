@@ -30,7 +30,7 @@ module.exports = {
       req.caughtScope = [ '*' ];
 
       if (req.user) {
-        var availableScopes = req.phobos.options.availableScopes;
+        var availableScopes = req.phobos.options.scopeCarrier.availableScopes;
         var userScopes = req.user.scope;
         var endpointScopes = req.controller.scopes;
 
