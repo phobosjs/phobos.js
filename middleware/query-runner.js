@@ -38,6 +38,7 @@ module.exports = {
         }
 
         if (req.query.order) query = query.sort(req.query.order);
+        if (req.query.sort) query = query.sort(req.query.sort);
         if (req.method === 'GET') query = query.lean();
       } else {
         return next();
