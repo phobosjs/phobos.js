@@ -34,7 +34,7 @@ module.exports = {
       var allLevel = getIndex(req.controller.scopes, '*');
       var elevatedScopes = req.controller.scopes.slice(allLevel).slice(ownerLevel);
 
-      if (elevatedScopes.length > 0 && req.caughtScope.length > 1) {
+      if (elevatedScopes.length > 0 && req.caughtScope.join() !== '*') {
         if (req.controller._rest) {
           var requestType = Helpers.determineRequestType(req);
           var permissions = req.controller.permissions[requestType] ? req.controller.permissions[requestType] : false;

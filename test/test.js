@@ -288,9 +288,7 @@ describe('[MIDDLEWARE]', function() {
         controller: {
           scopes: [ '*' ]
         },
-        bearerToken: {
-          user: user_id
-        }
+        bearerToken: user_id
       });
 
       var response = httpMocks.createResponse();
@@ -479,7 +477,9 @@ describe('[MIDDLEWARE]', function() {
         },
         phobos: {
           options: {
-            availableScopes: [ '*', 'user', 'owner', 'admin' ]
+            scopeCarrier: {
+              availableScopes: [ '*', 'user', 'owner', 'admin' ]
+            }
           }
         },
         rawResources: {

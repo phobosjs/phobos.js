@@ -16,10 +16,11 @@ module.exports = {
       if (!req.bearerToken) return next();
 
       var User = DS[req.phobos.options.scopeCarrier.model];
-      var query = User.findOne({ _id: req.bearerToken.user });
+      var query = User.findOne({ _id: req.bearerToken });
 
       query.lean().exec(function(err, user) {
         if (err) return next(err);
+        if (!user) return next();
 
         req.user = user;
         return next();

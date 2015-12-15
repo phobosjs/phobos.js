@@ -41,8 +41,10 @@ module.exports = {
       if (Array.isArray(req.rawResources)) {
         req.resource = [];
 
-        for (var i = 0; i < req.rawResources.length; i++) {
-          req.resource.push(filter(req.rawResources[i], allowed));
+        if (allowed) {
+          for (var i = 0; i < req.rawResources.length; i++) {
+            req.resource.push(filter(req.rawResources[i], allowed));
+          }
         }
       } else {
         req.resource = filter(req.rawResources, allowed);
