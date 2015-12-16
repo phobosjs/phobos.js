@@ -15,7 +15,13 @@ module.exports = function bearer(req, res, next) {
 
   if (!token) {
     if (req.controller.scopes.indexOf('*') > -1) return next();
-    return next({ stack: 'JWT', translation: 'api.error.auth.no_token_present', message: 'No token present' });
+
+    return next({
+      stack: 'JWT',
+      translation: 'api.error.auth.no_token_present',
+      message: 'No token present',
+      code: 401
+    });
   }
 
   try {

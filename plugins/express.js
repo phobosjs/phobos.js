@@ -1,16 +1,11 @@
 'use strict';
 
 var bodyParser = require('body-parser');
-var cors = require('cors');
-var morgan = require('morgan');
-var responseTime = require('response-time');
-var methodOverride = require('method-override');
-var queryParams = require('express-query-params');
 
 module.exports = {
 
   methodOverride: {
-    plugin: methodOverride
+    plugin: require('method-override')
   },
 
   bodyParserText: {
@@ -23,16 +18,16 @@ module.exports = {
   },
 
   morgan: {
-    plugin: morgan,
+    plugin: require('morgan'),
     opts: 'combined'
   },
 
   responseTime: {
-    plugin: responseTime
+    plugin: require('response-time')
   },
 
   cors: {
-    plugin: cors,
+    plugin: require('cors'),
     opts: {
       methods: ['GET', 'POST', 'OPTIONS', 'DELETE', 'PATCH', 'UPDATE', 'PUT'],
       credentials: true,
@@ -42,7 +37,7 @@ module.exports = {
   },
 
   queryParams: {
-    plugin: queryParams
+    plugin: require('express-query-params')
   }
 
 };
