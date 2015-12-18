@@ -21,7 +21,12 @@ module.exports = {
       if (Array.isArray(req.rawResources)) return next();
 
       for (var i = 0; i < req.controller.permissions.owners.length; i++) {
-        if (req.user._id.toString() === req.rawResources[req.controller.permissions.owners[i]].toString()) req.ownership = true;
+        var userId = req.user._id;
+        var resourceOwnerId = req.rawResources[req.controller.permissions.owners[i]];
+
+        if (userId && resourceOwnerId && (userId.toString() === resourceOwnerId.toString())) {
+          req.ownership = true;
+        }
       }
 
       return next();
