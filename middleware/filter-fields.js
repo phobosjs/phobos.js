@@ -50,6 +50,8 @@ module.exports = {
         req.resource = filter(req.rawResources, allowed);
       }
 
+      if (req.resource.length < 1) req.rawResourcesCount = 0;
+
       return next();
     }
   }
