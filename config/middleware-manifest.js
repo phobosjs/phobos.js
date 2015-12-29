@@ -10,17 +10,28 @@
   different arguments depending on endpoint.
 */
 
-var MiddlewareStack = [
-  'bearer',
-  'user',
-  'query-parser',
-  'includables',
-  'query-runner',
-  'scope-catch',
-  'ownership',
-  'apply-scope',
-  'mutate',
-  'filter-fields'
-];
+var MiddlewareStacks = {
+    restful: [
+    'bearer',
+    'user',
+    'query-parser',
+    'includables',
+    'query-runner',
+    'scope-catch',
+    'ownership',
+    'apply-scope',
+    'mutate',
+    'filter-fields'
+  ],
+  adhoc: [
+    'bearer',
+    'user',
+    'query-parser',
+    'query-runner',
+    'scope-catch',
+    'ownership',
+    'apply-scope'
+  ]
+};
 
-module.exports = MiddlewareStack;
+module.exports = MiddlewareStacks;
