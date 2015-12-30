@@ -1,0 +1,14 @@
+# Site settings
+title: phobos.js
+email: phobos@fiiv.io
+description: > # this means to ignore newlines until "baseurl:"
+  Write an awesome description for your new site here. You can edit this
+  line in _config.yml. It will appear in your document head meta (for
+  Google search results) and in your feed.xml site description.
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: "https://phobos.fiiv.io" # the base hostname & protocol for your site
+twitter_username: mtimofiiv
+github_username:  phobosjs
+
+# Build settings
+markdown: kramdown
