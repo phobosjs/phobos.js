@@ -1,43 +1,22 @@
 body {
+  font-family: $font-family;
+  font-size: 16px;
+  line-height: 1.23;
+  font-weight: 300;
+  color: #383838;
 }
 
-.navbar {
-  margin-bottom: 0;
+a, a:visited {
+  color: $brand-color;
+  text-decoration: none;
 }
 
-.navbar-default {
-  background-color: rgb(190, 84, 16);
-  border: 0;
-  border-radius: 0;
+a:hover {
+  text-decoration: underline;
+  color: lighten($brand-color, 25%);
 }
 
-.jumbotron {
-  color: white;
-  background: rgb(190, 84, 16);
-}
-
-.jumbotron h1 {
-  border-bottom: 1px solid rgb(237, 206, 152);
-  padding-bottom: 20px;
-  color: rgb(237, 206, 152);
-}
-
-.jumbotron p {
-  padding: 20px 0;
-  font-size: 25px;
-}
-
-footer.jumbotron {
-  margin-bottom: 0;
-  margin-top: 100px;
-  background: rgb(190, 84, 16);
-  color: white;
-}
-
-.jumbotron .link {
-  color: rgb(237, 206, 152);
-}
-
-.space-me {
-  margin: 50px 0;
+.container {
+  width: 80%;
+  margin: 0 auto;
 }

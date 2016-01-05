@@ -3,6 +3,9 @@
 ---
 @charset "utf-8";
 
+$brand-color: #c1272d;
+$font-family: 'Lato', 'Helvetica Neue', Helvetica, sans-serif;
 
-
+@import 'reset';
 @import 'base';
+@import 'layout';

@@ -1,11 +1,32 @@
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width initial-scale=1" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<head itemscope itemtype="http://schema.org/WebSite">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-site-verification" content="S39ZH2_LUXsg142UyZdo1-i8nyauudIct04nH81GpwM">
 
-    <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
-    <meta name="description" content="{{ site.description }}">
+  <link rel="icon" type="image/x-icon" href="{{ site.url }}/assets/favicon.ico">
+  <link href="https://fonts.googleapis.com/css?family=Lato:400,300,700,700italic,400italic,300italic,100,100italic" rel="stylesheet" type="text/css">
 
-    <link rel="stylesheet" href="{{ "/css/main.css" | prepend: site.baseurl }}">
-    <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
+  <title itemprop="name">{{ site.title }}</title>
+  <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 | replace:'"', '' }}{% else %}{{ site.description | replace:'"', '' }}{% endif %}">
+
+  <meta name="homepage" href="{{ site.url }}" itemprop="url">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="{{ "/assets/style.css" | prepend: site.baseurl }}">
+  <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
+  <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ "/feed.xml" | prepend: site.baseurl | prepend: site.url }}">
+
+  <meta property="og:title" content="{{ page.title }}">
+  <meta property="og:site_name" content="{{ site.title }}">
+  <meta property="og:url" content="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
+  <meta property="og:image" content="{% if page.title %}{{ page.masthead | prepend: site.baseurl | prepend: site.url }}{% else %}{{ "/assets/images/fiiv.jpg" | prepend: site.url }}{% endif %}">
+  <meta property="og:description" content="{% if page.title %}{{ page.subtitle | replace:'"', '' }}{% else %}{{ site.description | replace:'"', '' }}{% endif %}">
+  <meta property="fb:app_id" content="1516645525316623">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:creator" content="@mtimofiiv">
+  <meta name="twitter:site" content="@mtimofiiv">
+  <meta name="twitter:title" content="{{ page.title }}">
+  <meta name="twitter:image" content="{% if page.title %}{{ page.masthead | prepend: site.baseurl | prepend: site.url }}{% else %}{{ "/assets/images/fiiv.jpg" | prepend: site.url }}{% endif %}">
+  <meta name="twitter:description" content="{% if page.title %}{{ page.subtitle | replace:'"', '' }}{% else %}{{ site.description | replace:'"', '' }}{% endif %}">
 </head>
