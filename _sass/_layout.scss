@@ -3,11 +3,52 @@ header {
   color: white;
 }
 
-.navbar img {
-  height: 200px;
+header a, header a:visited {
+  color: white;
+}
+
+.navbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.branding, nav {
+  flex: 1 1 auto;
+}
+
+.branding a {
+  font-size: 20px;
+  font-weight: bold;
+  padding: 8px 0;
+  display: block;
+}
+
+nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+nav a, nav a:visited {
+  flex: 1 1 auto;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+  font-weight: bold;
+  background: $brand-color;
+  text-align: center;
+  font-size: 14px;
+}
+
+nav a:hover {
+  background: lighten($brand-color, 5%);
+  text-decoration: none;
 }
 
 .masthead {
+  padding-top: 100px;
   background: $brand-color;
   color: white;
   text-align: center;
@@ -24,6 +65,13 @@ header {
   padding: 200px 0;
   text-align: center;
   font-size: 52px;
+}
+
+.page-header {
+  padding: 20px 0;
+  border-bottom: 1px solid $brand-color;
+  color: $brand-color;
+  padding-bottom: 10px;
 }
 
 footer {
