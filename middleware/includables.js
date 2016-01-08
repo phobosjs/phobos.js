@@ -13,7 +13,7 @@ module.exports = {
 
   middleware: function includablesMiddleware(DS) {
     return function includables(req, res, next) {
-      req.includeRelations = [];
+      req.includeRelations = {};
 
       if (!req.query.include || req.query.include === '') return next();
 
@@ -27,7 +27,7 @@ module.exports = {
             field: relations[i]
           };
 
-          req.includeRelations.push(relation);
+          req.includeRelations[relations[i]] = relation;
         }
       }
 

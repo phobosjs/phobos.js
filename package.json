@@ -13,7 +13,15 @@
   },
   "author": "Mike Timofiiv (http://fiiv.io)",
   "license": "MIT",
-  "peerDependencies": {
+  "homepage": "https://phobos.js.org",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "chai-as-promised": "^5.1.0",
+    "mocha": "^2.3.4",
+    "node-mocks-http": "^1.5.1"
+  },
+  "dependencies": {
+    "express-query-params": "^0.2.0",
     "body-parser": "1.x",
     "cors": "2.x",
     "express": "4.x",
@@ -23,15 +31,5 @@
     "morgan": "1.x",
     "response-time": "2.x",
     "method-override": "^2.3.4"
-  },
-  "homepage": "http://phobos.fiiv.io",
-  "devDependencies": {
-    "chai": "^3.4.1",
-    "chai-as-promised": "^5.1.0",
-    "mocha": "^2.3.4",
-    "node-mocks-http": "^1.5.1"
-  },
-  "dependencies": {
-    "express-query-params": "^0.2.0"
   }
 }
