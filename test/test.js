@@ -346,10 +346,10 @@ describe('[MIDDLEWARE]', function() {
     it('detects includable objects', function() {
       middleware(request, response, function() {
         expect(request).to.have.property('includeRelations');
-        expect(request.includeRelations).to.be.instanceOf(Array);
-        expect(request.includeRelations.length).to.equal(1);
-        expect(request.includeRelations[0].model).to.equal('User');
-        expect(request.includeRelations[0].field).to.equal('owner');
+        expect(request.includeRelations).to.be.an('object');
+        expect(request.includeRelations).ownProperty('owner');
+        expect(request.includeRelations.owner.model).to.equal('User');
+        expect(request.includeRelations.owner.field).to.equal('owner');
       });
     });
 
