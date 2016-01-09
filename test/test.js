@@ -139,7 +139,7 @@ describe('[MIDDLEWARE]', function() {
 
     it('sets per-request variables properly for a RESTful route', function() {
       var mounted = middleware({
-        verb: 'users',
+        mountedAt: 'users',
         name: 'index'
       }, {
         scope: [ '*' ],
@@ -163,7 +163,7 @@ describe('[MIDDLEWARE]', function() {
 
       mounted(request, response, function(err) {
         expect(request.controller._rest).to.be.true;
-        expect(request.controller.spec).to.have.property('verb');
+        expect(request.controller.spec).to.have.property('mountedAt');
         expect(request.controller.spec).to.have.property('name');
         expect(request.controller.action).to.be.a.function;
         expect(request.controller.permissions).to.have.property('*');

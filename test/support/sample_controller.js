@@ -5,8 +5,8 @@
 module.exports = function(DS, Mutation) {
   return {
 
-    // _verb tells Phobos.js where to mount your resource - should be a plural word
-    _verb: 'users',
+    // _mountedAt tells Phobos.js where to mount your resource - should be a plural word
+    _mountedAt: 'users',
 
     // _expose tells Phobos.js which methods to open up to the world for this resource (each corresponds to an object name)
     _expose: ['index', 'show', 'new', 'update', 'delete'],
