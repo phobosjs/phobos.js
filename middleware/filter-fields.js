@@ -26,10 +26,11 @@ var filterRecord = function(record, permissions, key) {
 
   for (var i = 0; i < allowed.length; i++) {
     var isRelation = Object.keys(permissions).indexOf(allowed[i]) > -1;
+    var exists = typeof record[allowed[i]] !== 'undefined';
 
-    if (record[allowed[i]] && !isRelation) {
+    if (exists && !isRelation) {
       cleanResource[allowed[i]] = record[allowed[i]];
-    } else if (record[allowed[i]] && isRelation) {
+    } else if (exists && isRelation) {
       cleanResource[allowed[i]] = filterRecord(record[allowed[i]], permissions, allowed[i]);
     }
   }
