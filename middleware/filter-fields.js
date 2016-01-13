@@ -16,7 +16,7 @@ var filterRecord = function(record, permissions, key) {
   var allowed = permissions[key];
 
   if (Array.isArray(allowed) && allowed.length === 0) {
-    allowed = Object.keys(record);
+    allowed = Object.keys(record.toJSON());
   };
 
   if (allowed === false) allowed = [];
