@@ -15,6 +15,10 @@ var Helpers = require('../lib/helpers');
 var filterRecord = function(record, permissions, key) {
   var allowed = permissions[key];
 
+  if (typeof record.toJSON === 'function') {
+    record = record.toJSON();
+  }
+
   if (Array.isArray(allowed) && allowed.length === 0) {
     allowed = Object.keys(record.toJSON());
   };
