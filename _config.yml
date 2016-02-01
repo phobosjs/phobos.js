@@ -3,7 +3,7 @@ title: phobos.js
 email: phobos@fiiv.io
 description: > # phobos.js allows you to quickly put together a JSON API for use with your front-end applications. It works with familiar, popular open-source modules to give you a rapid head start to building otherwise complex components.
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: "https://phobos.fiiv.io" # the base hostname & protocol for your site
+url: "https://phobos.js.org" # the base hostname & protocol for your site
 twitter_username: mtimofiiv
 github_username:  phobosjs
 
