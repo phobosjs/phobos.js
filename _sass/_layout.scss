@@ -74,11 +74,56 @@ nav a:hover {
   padding-bottom: 10px;
 }
 
+.lead {
+  padding: 20px 0;
+  font-size: 25px;
+  line-height: 1.635;
+}
+
+.built-with {
+  margin: 20px 0;
+}
+
+.built-with h2 {
+  text-align: center;
+  padding: 15px 0;
+}
+
+.built-with a {
+  display: block;
+  float: left;
+}
+
+.built-with .nodejs {
+  width: 49%;
+  text-align: right;
+  margin-right: 1%;
+}
+
+.built-with .nodejs img {
+  height: 100px;
+}
+
+.built-with .mongo {
+  width: 49%;
+  margin-left: 1%;
+  text-align: left;
+}
+
+.built-with .mongo img {
+  height: 100px;
+}
+
+.clear {
+  clear: both;
+}
+
 footer {
   background: $brand-color;
   color: white;
   font-size: 18px;
   padding: 50px 0;
+  margin-top: 50px;
 }
 
 footer p {
