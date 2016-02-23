@@ -2,11 +2,11 @@
 
 /*
   rest-pattern.js
-  
+
   This is the base pattern in which resources will be created.
 */
 
-var REST = {
+const REST = {
   index: { endpoint: '/', method: 'get' },
   new: { endpoint: '/', method: 'post' },
   show: { endpoint: '/:id', method: 'get' },

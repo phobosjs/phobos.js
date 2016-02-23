@@ -10,7 +10,7 @@
   different arguments depending on endpoint.
 */
 
-var MiddlewareStacks = {
+const MiddlewareStacks = {
     restful: [
     'bearer',
     'user',

@@ -1,5 +1,7 @@
 'use strict';
 
+/* globals before, after, describe, it, beforeEach, afterEach */
+
 var chai = require('chai');
 
 chai.use(require('chai-as-promised'));
@@ -75,13 +77,13 @@ describe('[LIBRARIES]', function() {
     });
 
     it('Loads a middleware loader object with dependencies', function() {
-      instance.dependencies['SampleRequirement'] = 'this sample requirement works';
+      instance.dependencies.SampleRequirement = 'this sample requirement works';
       var obj = {
         inject: [ 'SampleRequirement' ],
         middleware: function(injection) {
           return function(err) {
             return injection;
-          }
+          };
         }
       };
 

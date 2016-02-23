@@ -11,12 +11,12 @@
   user.
 */
 
-var Helpers = require('../lib/helpers');
+const Helpers = require('../lib/helpers');
 
-var getIndex = function(arr, find) {
-  var index = arr.indexOf(find);
+function getIndex(arr, find) {
+  let index = arr.indexOf(find);
   return index === -1 ? 0 : index;
-};
+}
 
 module.exports = {
 
@@ -57,7 +57,7 @@ module.exports = {
       }
 
       return next();
-    }
+    };
   }
 
 };

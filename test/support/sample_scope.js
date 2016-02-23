@@ -4,8 +4,6 @@ module.exports = {
 
   // Each object corresponds to a schema/resource/controller
   User: {
-
-
   /*
     Each of these takes several possible options:
 

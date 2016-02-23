@@ -17,22 +17,22 @@ module.exports = {
 
       if (!req.query.include || req.query.include === '') return next();
 
-      var relations = req.query.include.split(',');
-      var model = DS[req.controller.model];
+      let relations = req.query.include.split(',');
+      let model = DS[req.controller.model];
 
-      for (var i = 0; i < relations.length; i++) {
-        if (model.schema.paths[relations[i]]) {
-          var relation = {
-            model: model.schema.tree[relations[i]].ref,
-            field: relations[i]
+      for (let relatable of relations) {
+        if (model.schema.paths[relatable]) {
+          let relation = {
+            model: model.schema.tree[relatable].ref,
+            field: relatable
           };
 
-          req.includeRelations[relations[i]] = relation;
+          req.includeRelations[relatable] = relation;
         }
       }
 
       return next();
-    }
+    };
   }
 
 };
