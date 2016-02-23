@@ -45,9 +45,7 @@ module.exports = {
       }
 
       if (req.includeRelations && Object.keys(req.includeRelations).length > 0) {
-        for (let r in req.includeRelations) {
-          let relation = req.includeRelations[r];
-
+        for (let relation in req.includeRelations) {
           query = query.populate(relation.field);
         }
       }
