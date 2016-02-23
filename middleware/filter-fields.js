@@ -10,36 +10,36 @@
   endpoints.
 */
 
-var Helpers = require('../lib/helpers');
+const Helpers = require('../lib/helpers');
 
-var filterRecord = function(record, permissions, key) {
-  var allowed = permissions[key];
+function filterRecord(record, permissions, key) {
+  let allowed = permissions[key];
 
   if (typeof record === 'undefined' || record === null) return record;
   if (typeof record.toJSON === 'function') record = record.toJSON();
 
   if (Array.isArray(allowed) && allowed.length === 0) {
     allowed = Object.keys(record);
-  };
+  }
 
   if (allowed === false) allowed = [];
   if (allowed.indexOf('_id') === -1) allowed.unshift('_id');
 
-  var cleanResource = {};
+  let cleanResource = {};
 
-  for (var i = 0; i < allowed.length; i++) {
-    var isRelation = Object.keys(permissions).indexOf(allowed[i]) > -1;
-    var exists = typeof record[allowed[i]] !== 'undefined';
+  for (let field of allowed) {
+    let isRelation = Object.keys(permissions).indexOf(field) > -1;
+    let exists = typeof record[field] !== 'undefined';
 
     if (exists && !isRelation) {
-      cleanResource[allowed[i]] = record[allowed[i]];
+      cleanResource[field] = record[field];
     } else if (exists && isRelation) {
-      cleanResource[allowed[i]] = filterRecord(record[allowed[i]], permissions, allowed[i]);
+      cleanResource[field] = filterRecord(record[field], permissions, field);
     }
   }
 
   return cleanResource;
-};
+}
 
 module.exports = {
 
@@ -49,9 +49,9 @@ module.exports = {
     return function filterFields(req, res, next) {
       if (!req.controller._rest) return next();
 
-      var requestType = Helpers.determineRequestType(req);
+      let requestType = Helpers.determineRequestType(req);
 
-      var permissions = {
+      let permissions = {
         _root: Helpers.getAllowedFields(
           req.controller.permissions[requestType],
           req.appliedScope
@@ -59,11 +59,11 @@ module.exports = {
       };
 
       if (req.hasOwnProperty('includeRelations')) {
-        var includables = Object.keys(req.includeRelations);
+        let includables = Object.keys(req.includeRelations);
 
-        for (var r = 0; r < includables.length; r++) {
-          permissions[includables[r]] = Helpers.getAllowedFields(
-            req.phobos.permissions[req.includeRelations[includables[r]].model][requestType],
+        for (let includable of includables) {
+          permissions[includable] = Helpers.getAllowedFields(
+            req.phobos.permissions[req.includeRelations[includable].model][requestType],
             req.appliedScope
           );
         }
@@ -72,8 +72,8 @@ module.exports = {
       if (Array.isArray(req.rawResources)) {
         req.resource = [];
 
-        for (var i = 0; i < req.rawResources.length; i++) {
-          req.resource.push(filterRecord(req.rawResources[i], permissions, '_root'));
+        for (let rawResource of req.rawResources) {
+          req.resource.push(filterRecord(rawResource, permissions, '_root'));
         }
       } else {
         req.resource = filterRecord(req.rawResources, permissions, '_root');
@@ -82,7 +82,7 @@ module.exports = {
       if (req.resource.length < 1) req.rawResourcesCount = 0;
 
       return next();
-    }
+    };
   }
 
 };

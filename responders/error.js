@@ -7,8 +7,8 @@
   with a consistent JSON object.
 */
 
-var errorObject = function(err) {
-  var error = {
+function errorObject(err) {
+  let error = {
     code: err.code || 500,
     translation: err.translation || 'error.api.miscellaneous'
   };
@@ -16,11 +16,11 @@ var errorObject = function(err) {
   if (err.message) error.message = err.message;
 
   return error;
-};
+}
 
-module.exports = function(err, req, res, next) {
-  var responseCode = 500;
-  var response = {
+module.exports = (err, req, res, next) => {
+  let responseCode = 500;
+  let response = {
     status: 'error',
     errors: []
   };

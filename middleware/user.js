@@ -15,17 +15,17 @@ module.exports = {
     return function user(req, res, next) {
       if (!req.bearerToken) return next();
 
-      var User = DS[req.phobos.options.scopeCarrier.model];
-      var query = User.findOne({ _id: req.bearerToken });
+      let User = DS[req.phobos.options.scopeCarrier.model];
+      let query = User.findOne({ _id: req.bearerToken });
 
-      query.lean().exec(function(err, user) {
+      query.lean().exec((err, user) => {
         if (err) return next(err);
         if (!user) return next();
 
         req.user = user;
         return next();
       });
-    }
+    };
   }
 
 };

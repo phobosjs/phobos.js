@@ -2,17 +2,17 @@
 
 // We create a function that takes a parameter for the Mongoose library
 module.exports = function(mongoose) {
-  var Schema = mongoose.Schema;
-  var ObjectId = Schema.Types.ObjectId;
+  const Schema = mongoose.Schema;
+  const ObjectId = Schema.Types.ObjectId;
 
   // The Schemas object is what we're going to return/export
-  var Schemas = {};
+  let Schemas = {};
 
   // The user schema - note the "scope" field
   Schemas.User = new Schema({
     username: { type: String, required: true },
     password: { type: String },
-    scope: { type: Array, required: true, default: [ 'user' ]},
+    scope: { type: Array, required: true, default: [ 'user' ] },
     updatedAt: { type: Date, default: new Date() }
   });
 

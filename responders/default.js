@@ -7,18 +7,22 @@
   controllers of the application will always be prioritized over these.
 */
 
-module.exports = function(DS) {
+function envelope(resource, data) {
+  let formatted = {};
+  formatted[resource] = data;
+
+  return formatted;
+}
+
+module.exports = function defaultResponder(DS) {
   return {
 
     index: {
 
       scope: [ '*' ],
 
-      responder: function(req, res, next) {
-        var envelope = {};
-        envelope[req.path.split('/')[1]] = req.resource;
-
-        return res.send(envelope);
+      responder: (req, res, next) => {
+        return res.send(envelope(req.path.split('/')[1], req.resource));
       }
 
     },
@@ -27,11 +31,8 @@ module.exports = function(DS) {
 
       scope: [ '*' ],
 
-      responder: function(req, res, next) {
-        var envelope = {};
-        envelope[req.path.split('/')[1]] = req.resource;
-
-        return res.send(envelope);
+      responder: (req, res, next) => {
+        return res.send(envelope(req.path.split('/')[1], req.resource));
       }
 
     },
@@ -40,11 +41,8 @@ module.exports = function(DS) {
 
       scope: [ '*' ],
 
-      responder: function(req, res, next) {
-        var envelope = {};
-        envelope[req.path.split('/')[1]] = req.resource;
-
-        return res.send(envelope);
+      responder: (req, res, next) => {
+        return res.send(envelope(req.path.split('/')[1], req.resource));
       }
 
     },
@@ -53,11 +51,8 @@ module.exports = function(DS) {
 
       scope: [ '*' ],
 
-      responder: function(req, res, next) {
-        var envelope = {};
-        envelope[req.path.split('/')[1]] = req.resource;
-
-        return res.send(envelope);
+      responder: (req, res, next) => {
+        return res.send(envelope(req.path.split('/')[1], req.resource));
       }
 
     },
@@ -66,11 +61,8 @@ module.exports = function(DS) {
 
       scope: [ '*' ],
 
-      responder: function(req, res, next) {
-        var envelope = {};
-        envelope[req.path.split('/')[1]] = req.resource;
-
-        return res.send(envelope);
+      responder: (req, res, next) => {
+        return res.send(envelope(req.path.split('/')[1], req.resource));
       }
 
     }

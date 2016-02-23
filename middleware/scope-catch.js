@@ -11,15 +11,15 @@
   share, with the exception of `*`, which is always present.
 */
 
-var catchScopes = function(userScopes, endpointScopes) {
-  var scopes = [];
+function catchScopes(userScopes, endpointScopes) {
+  let scopes = [];
 
-  for (var i = 0; i < endpointScopes.length; i++) {
-    if (userScopes.indexOf(endpointScopes[i]) > -1) scopes.push(endpointScopes[i]);
+  for (let scope of endpointScopes) {
+    if (userScopes.indexOf(scope) > -1) scopes.push(scope);
   }
 
   return scopes;
-};
+}
 
 module.exports = {
 
@@ -30,15 +30,15 @@ module.exports = {
       req.caughtScope = [ '*' ];
 
       if (req.user) {
-        var availableScopes = req.phobos.options.scopeCarrier.availableScopes;
-        var userScopes = req.user.scope;
-        var endpointScopes = req.controller.scopes;
+        let availableScopes = req.phobos.options.scopeCarrier.availableScopes;
+        let userScopes = req.user.scope;
+        let endpointScopes = req.controller.scopes;
 
         req.caughtScope = catchScopes(userScopes, endpointScopes);
       }
 
       return next();
-    }
+    };
   }
 
 };

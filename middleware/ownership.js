@@ -20,9 +20,9 @@ module.exports = {
       if (!req.controller.permissions.owners || !Array.isArray(req.controller.permissions.owners)) return next();
       if (Array.isArray(req.rawResources)) return next();
 
-      for (var i = 0; i < req.controller.permissions.owners.length; i++) {
-        var userId = req.user._id;
-        var resourceOwnerId = req.rawResources[req.controller.permissions.owners[i]];
+      for (let owner of req.controller.permissions.owners) {
+        let userId = req.user._id;
+        let resourceOwnerId = req.rawResources[owner];
 
         if (userId && resourceOwnerId && (userId.toString() === resourceOwnerId.toString())) {
           req.ownership = true;
@@ -30,7 +30,7 @@ module.exports = {
       }
 
       return next();
-    }
+    };
   }
 
 };

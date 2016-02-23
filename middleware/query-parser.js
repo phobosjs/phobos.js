@@ -17,15 +17,15 @@ module.exports = {
       req.searchParams = {};
 
       if (!req.params.id && req.controller.permissions.searchableBy) {
-        var allowed = req.controller.permissions.searchableBy;
+        let allowed = req.controller.permissions.searchableBy;
 
-        for (var i = 0; i < allowed.length; i++) {
-          if (req.parsedQuery[allowed[i]]) req.searchParams[allowed[i]] = req.parsedQuery[allowed[i]];
+        for (let field of allowed) {
+          if (req.parsedQuery[field]) req.searchParams[field] = req.parsedQuery[field];
         }
       }
 
       return next();
-    }
+    };
 
   }
 

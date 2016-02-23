@@ -14,11 +14,11 @@ module.exports = {
   middleware: function queryRunnerMiddleware(DS) {
 
     return function queryRunner(req, res, next) {
-      var Model = DS[req.controller.model];
+      const Model = DS[req.controller.model];
       req.rawResources = {};
 
-      var query = false;
-      var count = false;
+      let query = false;
+      let count = false;
 
       if (req.params.id) {
         query = Model.findById(req.params.id);
@@ -29,7 +29,7 @@ module.exports = {
         count = Model.count(req.searchParams);
 
         if (req.query.page) {
-          var perPage = parseInt(req.query.perPage) || 20;
+          let perPage = parseInt(req.query.perPage) || 20;
 
           query = query.skip((parseInt(req.query.page) * perPage) - perPage);
           query = query.limit(perPage);
@@ -45,28 +45,28 @@ module.exports = {
       }
 
       if (req.includeRelations && Object.keys(req.includeRelations).length > 0) {
-        for (var r in req.includeRelations) {
-          var relation = req.includeRelations[r];
+        for (let r in req.includeRelations) {
+          let relation = req.includeRelations[r];
 
           query = query.populate(relation.field);
         }
       }
 
-      query.exec(function(err, result) {
+      query.exec((err, result) => {
         if (err) return next(err);
 
         req.rawResources = result;
 
         if (!count) return next();
 
-        count.exec(function(err, counter) {
+        count.exec((err, counter) => {
           if (err) return next(err);
 
           req.rawResourcesCount = counter;
           return next();
         });
       });
-    }
+    };
 
   }
 
