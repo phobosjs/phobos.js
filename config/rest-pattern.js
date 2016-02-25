@@ -11,7 +11,7 @@ const REST = {
   new: { endpoint: '/', method: 'post' },
   show: { endpoint: '/:id', method: 'get' },
   update: { endpoint: '/:id', method: 'put' },
-  delete: { endpoint: '/:id', method: 'delete' }
+  delete: { endpoint: '/:id', method: 'del' }
 };
 
 module.exports = REST;
