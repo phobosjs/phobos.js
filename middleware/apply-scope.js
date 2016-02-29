@@ -30,15 +30,15 @@ module.exports = {
       if (!req.user) return next();
       if (req.caughtScope.join() === '*' && !req.ownership) return next();
 
-      var ownerLevel = getIndex(req.controller.scopes, 'owner');
-      var allLevel = getIndex(req.controller.scopes, '*');
-      var elevatedScopes = req.controller.scopes.slice(allLevel).slice(ownerLevel);
+      let ownerLevel = getIndex(req.controller.scopes, 'owner');
+      let allLevel = getIndex(req.controller.scopes, '*');
+      let elevatedScopes = req.controller.scopes.slice(allLevel).slice(ownerLevel);
 
       if (elevatedScopes.length > 0 && req.caughtScope.join() !== '*') {
         if (req.controller._rest) {
-          var requestType = Helpers.determineRequestType(req);
-          var permissions = req.controller.permissions[requestType] ? req.controller.permissions[requestType] : false;
-          var sift = Helpers.siftPermissionMatrix(permissions, elevatedScopes);
+          let requestType = Helpers.determineRequestType(req);
+          let permissions = req.controller.permissions[requestType] ? req.controller.permissions[requestType] : false;
+          let sift = Helpers.siftPermissionMatrix(permissions, elevatedScopes);
 
           if (sift) req.appliedScope = sift;
         } else {
