@@ -17,12 +17,12 @@ module.exports = {
 
       if (!req.query.include || req.query.include === '') return next();
 
-      let relations = req.query.include.split(',');
-      let model = DS[req.controller.model];
+      const relations = req.query.include.split(',');
+      const model = DS[req.controller.model];
 
       for (let relatable of relations) {
         if (model.schema.paths[relatable]) {
-          let relation = {
+          const relation = {
             model: model.schema.tree[relatable].ref,
             field: relatable
           };

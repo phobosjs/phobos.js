@@ -25,8 +25,8 @@ module.exports = function bearer(req, res, next) {
   }
 
   try {
-    let Bearer = new BearerLib(req.phobos.options.bearerTokenSignature);
-    let decoded = Bearer.verify(token);
+    const Bearer = new BearerLib(req.phobos.options.bearerTokenSignature);
+    const decoded = Bearer.verify(token);
 
     req.bearerToken = decoded;
     return next();
