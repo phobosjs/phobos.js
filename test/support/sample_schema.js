@@ -6,7 +6,7 @@ module.exports = function(mongoose) {
   const ObjectId = Schema.Types.ObjectId;
 
   // The Schemas object is what we're going to return/export
-  let Schemas = {};
+  const Schemas = {};
 
   // The user schema - note the "scope" field
   Schemas.User = new Schema({
