@@ -79,7 +79,8 @@ module.exports = {
         req.resource = filterRecord(req.rawResources, permissions, '_root');
       }
 
-      if (req.resource.length < 1) req.rawResourcesCount = 0;
+      if (!req.resource || req.resource.length < 1) req.rawResourcesCount = 0;
+      if (req.resource === null) return next({ status: 404 });
 
       return next();
     };
