@@ -25,11 +25,11 @@ function filterRecord(record, permissions, key) {
   if (allowed === false) allowed = [];
   if (allowed.indexOf('_id') === -1) allowed.unshift('_id');
 
-  let cleanResource = {};
+  const cleanResource = {};
 
   for (let field of allowed) {
-    let isRelation = Object.keys(permissions).indexOf(field) > -1;
-    let exists = typeof record[field] !== 'undefined';
+    const isRelation = Object.keys(permissions).indexOf(field) > -1;
+    const exists = typeof record[field] !== 'undefined';
 
     if (exists && !isRelation) {
       cleanResource[field] = record[field];
@@ -49,9 +49,9 @@ module.exports = {
     return function filterFields(req, res, next) {
       if (!req.controller._rest) return next();
 
-      let requestType = Helpers.determineRequestType(req);
+      const requestType = Helpers.determineRequestType(req);
 
-      let permissions = {
+      const permissions = {
         _root: Helpers.getAllowedFields(
           req.controller.permissions[requestType],
           req.appliedScope
@@ -59,7 +59,7 @@ module.exports = {
       };
 
       if (req.hasOwnProperty('includeRelations')) {
-        let includables = Object.keys(req.includeRelations);
+        const includables = Object.keys(req.includeRelations);
 
         for (let includable of includables) {
           permissions[includable] = Helpers.getAllowedFields(
@@ -79,7 +79,8 @@ module.exports = {
         req.resource = filterRecord(req.rawResources, permissions, '_root');
       }
 
-      if (req.resource.length < 1) req.rawResourcesCount = 0;
+      if (!req.resource || req.resource.length < 1) req.rawResourcesCount = 0;
+      if (req.resource === null) return next({ status: 404 });
 
       return next();
     };

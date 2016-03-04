@@ -17,7 +17,7 @@ module.exports = {
       req.searchParams = {};
 
       if (!req.params.id && req.controller.permissions.searchableBy) {
-        let allowed = req.controller.permissions.searchableBy;
+        const allowed = req.controller.permissions.searchableBy;
 
         for (let field of allowed) {
           if (req.parsedQuery[field]) req.searchParams[field] = req.parsedQuery[field];

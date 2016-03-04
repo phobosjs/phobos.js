@@ -14,7 +14,7 @@
 const Helpers = require('../lib/helpers');
 
 function getIndex(arr, find) {
-  let index = arr.indexOf(find);
+  const index = arr.indexOf(find);
   return index === -1 ? 0 : index;
 }
 
@@ -30,15 +30,15 @@ module.exports = {
       if (!req.user) return next();
       if (req.caughtScope.join() === '*' && !req.ownership) return next();
 
-      let ownerLevel = getIndex(req.controller.scopes, 'owner');
-      let allLevel = getIndex(req.controller.scopes, '*');
-      let elevatedScopes = req.controller.scopes.slice(allLevel).slice(ownerLevel);
+      const ownerLevel = getIndex(req.controller.scopes, 'owner');
+      const allLevel = getIndex(req.controller.scopes, '*');
+      const elevatedScopes = req.controller.scopes.slice(allLevel).slice(ownerLevel);
 
       if (elevatedScopes.length > 0 && req.caughtScope.join() !== '*') {
         if (req.controller._rest) {
-          let requestType = Helpers.determineRequestType(req);
-          let permissions = req.controller.permissions[requestType] ? req.controller.permissions[requestType] : false;
-          let sift = Helpers.siftPermissionMatrix(permissions, elevatedScopes);
+          const requestType = Helpers.determineRequestType(req);
+          const permissions = req.controller.permissions[requestType] ? req.controller.permissions[requestType] : false;
+          const sift = Helpers.siftPermissionMatrix(permissions, elevatedScopes);
 
           if (sift) req.appliedScope = sift;
         } else {
