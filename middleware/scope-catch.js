@@ -12,7 +12,7 @@
 */
 
 function catchScopes(userScopes, endpointScopes) {
-  let scopes = [];
+  const scopes = [];
 
   for (let scope of endpointScopes) {
     if (userScopes.indexOf(scope) > -1) scopes.push(scope);
@@ -30,9 +30,9 @@ module.exports = {
       req.caughtScope = [ '*' ];
 
       if (req.user) {
-        let availableScopes = req.phobos.options.scopeCarrier.availableScopes;
-        let userScopes = req.user.scope;
-        let endpointScopes = req.controller.scopes;
+        const availableScopes = req.phobos.options.scopeCarrier.availableScopes;
+        const userScopes = req.user.scope;
+        const endpointScopes = req.controller.scopes;
 
         req.caughtScope = catchScopes(userScopes, endpointScopes);
       }

@@ -18,13 +18,13 @@ module.exports = {
     return function mutate(req, res, next) {
       req.mutated = false;
 
-      let requestType = Helpers.determineRequestType(req);
-      let permissions = req.controller.permissions[requestType];
+      const requestType = Helpers.determineRequestType(req);
+      const permissions = req.controller.permissions[requestType];
 
       if (['edit', 'create', 'delete'].indexOf(requestType) === -1) return next();
 
-      let resource = Inflector.singularize(req.path.split('/')[1]);
-      let params = req.body[resource];
+      const resource = Inflector.singularize(req.path.split('/')[1]);
+      const params = req.body[resource];
 
       if ((!resource && req.controller._rest) && (!params || requestType !== 'delete')) return next({
         translation: 'api.error.auth.invalid_request',
@@ -39,7 +39,7 @@ module.exports = {
           return next(err);
         });
       } else {
-        let allowedFields = Helpers.getAllowedFields(permissions, req.appliedScope);
+        const allowedFields = Helpers.getAllowedFields(permissions, req.appliedScope);
 
         if (!allowedFields) return next({
           translation: 'api.error.auth.insufficient_privilege',

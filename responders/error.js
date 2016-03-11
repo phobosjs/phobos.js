@@ -8,7 +8,7 @@
 */
 
 function errorObject(err) {
-  let error = {
+  const error = {
     code: err.code || 500,
     translation: err.translation || 'error.api.miscellaneous'
   };
@@ -19,11 +19,12 @@ function errorObject(err) {
 }
 
 module.exports = (err, req, res, next) => {
-  let responseCode = 500;
-  let response = {
+  const response = {
     status: 'error',
     errors: []
   };
+
+  let responseCode = 500;
 
   response.errors.push(errorObject(err));
 

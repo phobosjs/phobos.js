@@ -21,8 +21,8 @@ module.exports = {
       if (Array.isArray(req.rawResources)) return next();
 
       for (let owner of req.controller.permissions.owners) {
-        let userId = req.user._id;
-        let resourceOwnerId = req.rawResources[owner];
+        const userId = req.user._id;
+        const resourceOwnerId = req.rawResources[owner];
 
         if (userId && resourceOwnerId && (userId.toString() === resourceOwnerId.toString())) {
           req.ownership = true;

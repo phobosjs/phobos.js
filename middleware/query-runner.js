@@ -29,7 +29,7 @@ module.exports = {
         count = Model.count(req.searchParams);
 
         if (req.query.page) {
-          let perPage = parseInt(req.query.perPage) || 20;
+          const perPage = parseInt(req.query.perPage) || 20;
 
           query = query.skip((parseInt(req.query.page) * perPage) - perPage);
           query = query.limit(perPage);
@@ -46,7 +46,7 @@ module.exports = {
 
       if (req.includeRelations && Object.keys(req.includeRelations).length > 0) {
         for (let r in req.includeRelations) {
-          let relation = req.includeRelations[r];
+          const relation = req.includeRelations[r];
 
           query = query.populate(relation.field);
         }

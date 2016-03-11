@@ -8,7 +8,7 @@
 */
 
 function envelope(resource, data) {
-  let formatted = {};
+  const formatted = {};
   formatted[resource] = data;
 
   return formatted;
