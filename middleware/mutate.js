@@ -23,7 +23,7 @@ module.exports = {
 
       if (['edit', 'create', 'delete'].indexOf(requestType) === -1) return next();
 
-      const resource = Inflector.singularize(req.path.split('/')[1]);
+      const resource = Inflector.singularize(req.path().split('/')[1]);
       const params = req.body[resource];
 
       if ((!resource && req.controller._rest) && (!params || requestType !== 'delete')) return next({

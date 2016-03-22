@@ -18,6 +18,8 @@ function catchScopes(userScopes, endpointScopes) {
     if (userScopes.indexOf(scope) > -1) scopes.push(scope);
   }
 
+  if (scopes.length === 0 && endpointScopes.indexOf('*')) scopes.push('*');
+
   return scopes;
 }
 
@@ -36,6 +38,8 @@ module.exports = {
 
         req.caughtScope = catchScopes(userScopes, endpointScopes);
       }
+
+      console.log(req.caughtScope);
 
       return next();
     };

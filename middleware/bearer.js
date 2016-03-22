@@ -10,8 +10,11 @@
 const BearerLib = require('../lib/bearer');
 
 module.exports = function bearer(req, res, next) {
-  let token = req.query.auth_token || req.body.auth_token;
-  token = (req.headers.authorization) ? req.headers.authorization.split(' ')[1] : token;
+  let token = null;
+
+  if (req.query && req.query.auth_token) token = req.query.auth_token;
+  if (req.body && req.body.auth_token) token = req.body.auth_token;
+  if (req.headers && req.headers.authorization) token = req.headers.authorization.split(' ')[1];
 
   if (!token) {
     if (req.controller.scopes.indexOf('*') > -1) return next();

@@ -22,7 +22,7 @@ module.exports = function defaultResponder(DS) {
       scope: [ '*' ],
 
       responder: (req, res, next) => {
-        return res.send(envelope(req.path.split('/')[1], req.resource));
+        return res.send(envelope(req.path().split('/')[1], req.resource));
       }
 
     },
@@ -32,7 +32,7 @@ module.exports = function defaultResponder(DS) {
       scope: [ '*' ],
 
       responder: (req, res, next) => {
-        return res.send(envelope(req.path.split('/')[1], req.resource));
+        return res.send(envelope(req.path().split('/')[1], req.resource));
       }
 
     },
@@ -42,7 +42,7 @@ module.exports = function defaultResponder(DS) {
       scope: [ '*' ],
 
       responder: (req, res, next) => {
-        return res.send(envelope(req.path.split('/')[1], req.resource));
+        return res.send(envelope(req.path().split('/')[1], req.resource));
       }
 
     },
@@ -52,7 +52,7 @@ module.exports = function defaultResponder(DS) {
       scope: [ '*' ],
 
       responder: (req, res, next) => {
-        return res.send(envelope(req.path.split('/')[1], req.resource));
+        return res.send(envelope(req.path().split('/')[1], req.resource));
       }
 
     },
@@ -62,7 +62,7 @@ module.exports = function defaultResponder(DS) {
       scope: [ '*' ],
 
       responder: (req, res, next) => {
-        return res.send(envelope(req.path.split('/')[1], req.resource));
+        return res.send(envelope(req.path().split('/')[1], req.resource));
       }
 
     }

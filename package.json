@@ -21,15 +21,10 @@
     "node-mocks-http": "^1.5.1"
   },
   "dependencies": {
-    "body-parser": "1.x",
-    "cors": "2.x",
     "express-query-params": "^0.2.0",
     "inflected": "1.x",
     "jsonwebtoken": "5.x",
-    "method-override": "^2.3.4",
     "mongoose": "4.x",
-    "morgan": "1.x",
-    "response-time": "2.x",
     "restify": "^4.0.4"
   }
 }
