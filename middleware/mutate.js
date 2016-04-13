@@ -63,7 +63,7 @@ module.exports = {
           for (let p in diffs) req.rawResources[p] = diffs[p];
         }
 
-        req.rawResources.save((err) => {
+        req.rawResources.$__save({}, (err) => {
           req.mutated = true;
           return next(err);
         });
