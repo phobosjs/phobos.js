@@ -23,7 +23,7 @@ module.exports = {
       if (req.params.id) {
         query = Model.findById(req.params.id);
 
-        if (req.method === 'GET') query = query.lean();
+        if (req.method === 'GET') query = query.lean(req.controller.spec ? req.controller.spec.leanQuery : true);
       } else if (!req.params.id && req.method === 'GET') {
         query = Model.find(req.searchParams);
         count = Model.count(req.searchParams);
