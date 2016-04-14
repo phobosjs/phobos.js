@@ -16,7 +16,7 @@ function filterRecord(record, permissions, key) {
   let allowed = permissions[key];
 
   if (typeof record === 'undefined' || record === null) return record;
-  if (typeof record.toJSON === 'function') record = record.toJSON();
+  if (typeof record.toObject === 'function') record = record.toObject();
 
   if (Array.isArray(allowed) && allowed.length === 0) {
     allowed = Object.keys(record);
