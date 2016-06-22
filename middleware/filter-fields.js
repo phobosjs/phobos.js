@@ -33,8 +33,8 @@ function filterRecord(record, permissions, key) {
 
     if (exists && !isRelation) {
       cleanResource[field] = record[field];
-    } else if (exists && isRelation) {
-      cleanResource[field] = filterRecord(record[field], permissions, field);
+    } else if (exists && isRelation && key === '_root') {
+      cleanResource[field] = key === '_root' ? filterRecord(record[field], permissions, field) : record[field];
     }
   }
 
