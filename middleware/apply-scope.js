@@ -38,7 +38,7 @@ module.exports = {
         if (req.controller._rest) {
           const requestType = Helpers.determineRequestType(req);
           const permissions = req.controller.permissions[requestType] ? req.controller.permissions[requestType] : false;
-          const sift = Helpers.siftPermissionMatrix(permissions, elevatedScopes);
+          const sift = Helpers.siftPermissionMatrix(permissions, elevatedScopes, req.caughtScope);
 
           if (sift) req.appliedScope = sift;
         } else {

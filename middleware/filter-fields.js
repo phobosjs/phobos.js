@@ -22,12 +22,12 @@ function filterRecord(record, permissions, key) {
     allowed = Object.keys(record);
   }
 
+  if (Array.isArray(allowed) && allowed.indexOf('_id') === -1) allowed.unshift('_id');
   if (allowed === false) allowed = [];
-  if (allowed.indexOf('_id') === -1) allowed.unshift('_id');
 
   const cleanResource = {};
 
-  for (let field of allowed) {
+  for (const field of allowed) {
     const isRelation = Object.keys(permissions).indexOf(field) > -1;
     const exists = typeof record[field] !== 'undefined';
 
@@ -61,7 +61,7 @@ module.exports = {
       if (req.hasOwnProperty('includeRelations')) {
         const includables = Object.keys(req.includeRelations);
 
-        for (let includable of includables) {
+        for (const includable of includables) {
           permissions[includable] = Helpers.getAllowedFields(
             req.phobos.permissions[req.includeRelations[includable].model][requestType],
             req.appliedScope
@@ -72,11 +72,13 @@ module.exports = {
       if (Array.isArray(req.rawResources)) {
         req.resource = [];
 
-        for (let rawResource of req.rawResources) {
-          req.resource.push(filterRecord(rawResource, permissions, '_root'));
+        for (const rawResource of req.rawResources) {
+          const record = filterRecord(rawResource, permissions, '_root');
+          if (Object.keys(record).length > 0) req.resource.push(record);
         }
       } else {
-        req.resource = filterRecord(req.rawResources, permissions, '_root');
+        const resource = filterRecord(req.rawResources, permissions, '_root');
+        req.resource = Object.keys(resource).length > 0 ? resource : null;
       }
 
       if (!req.resource || req.resource.length < 1) req.rawResourcesCount = 0;

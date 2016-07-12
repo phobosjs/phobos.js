@@ -14,7 +14,7 @@
 function catchScopes(userScopes, endpointScopes) {
   const scopes = [];
 
-  for (let scope of endpointScopes) {
+  for (const scope of endpointScopes) {
     if (userScopes.indexOf(scope) > -1) scopes.push(scope);
   }
 
@@ -27,15 +27,19 @@ module.exports = {
 
   middleware: function scopeCatchMiddlware() {
     return function scopeCatch(req, res, next) {
-      req.caughtScope = [ '*' ];
+      const endpointScopes = req.controller.scopes;
+      req.caughtScope = [];
 
       if (req.user) {
-        const availableScopes = req.phobos.options.scopeCarrier.availableScopes;
-        const userScopes = req.user.scope;
-        const endpointScopes = req.controller.scopes;
-
-        req.caughtScope = catchScopes(userScopes, endpointScopes);
+        req.caughtScope = catchScopes(req.user.scope, endpointScopes);
       }
+
+      if (req.caughtScope.length < 1 && endpointScopes.indexOf('*') > -1) req.caughtScope.push('*');
+
+      if (req.caughtScope.length < 1) return next({
+        translation: 'api.error.auth.insufficient_privilege',
+        code: 401
+      });
 
       return next();
     };
