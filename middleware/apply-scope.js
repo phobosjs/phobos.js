@@ -42,7 +42,10 @@ module.exports = {
 
           if (sift) req.appliedScope = sift;
         } else {
-          req.appliedScope = elevatedScopes[elevatedScopes.length - 1];
+          for (const scope of req.controller.scopes) {
+            if (req.user.scope && req.user.scope.indexOf(scope) > -1) req.appliedScope = scope;
+          }
+
         }
       }
 
@@ -55,6 +58,11 @@ module.exports = {
       if (req.ownership && req.appliedScope === '*') {
         req.appliedScope = 'owner';
       }
+
+      if (req.controller.scopes.indexOf(req.appliedScope) === -1) return next({
+        translation: 'api.error.auth.insufficient_privilege',
+        code: 401
+      });
 
       return next();
     };
