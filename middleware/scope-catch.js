@@ -36,11 +36,6 @@ module.exports = {
 
       if (req.caughtScope.length < 1 && endpointScopes.indexOf('*') > -1) req.caughtScope.push('*');
 
-      if (req.caughtScope.length < 1) return next({
-        translation: 'api.error.auth.insufficient_privilege',
-        code: 401
-      });
-
       return next();
     };
   }
