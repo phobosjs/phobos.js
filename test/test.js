@@ -628,7 +628,9 @@ describe('[MIDDLEWARE]', function() {
       var request = httpMocks.createRequest({
         caughtScope: [ '*', 'admin' ],
         method: 'GET',
-        user: {},
+        user: {
+          scope: [ 'admin' ]
+        },
         controller: {
           scopes: [ '*', 'owner', 'admin' ],
           _rest: false,
@@ -641,6 +643,7 @@ describe('[MIDDLEWARE]', function() {
       var response = httpMocks.createResponse();
 
       middleware(request, response, function() {
+        console.log(request.appliedScope);
         expect(request).to.have.property('appliedScope');
         expect(request.appliedScope).to.equal('admin');
       });

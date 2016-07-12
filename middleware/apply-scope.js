@@ -43,7 +43,7 @@ module.exports = {
           if (sift) req.appliedScope = sift;
         } else {
           for (const scope of req.controller.scopes) {
-            if (req.user.scope.indexOf(scope) > -1) req.appliedScope = scope;
+            if (req.user.scope && req.user.scope.indexOf(scope) > -1) req.appliedScope = scope;
           }
 
         }
