@@ -20,7 +20,7 @@ module.exports = {
       if (!req.controller.permissions.owners || !Array.isArray(req.controller.permissions.owners)) return next();
       if (Array.isArray(req.rawResources)) return next();
 
-      for (let owner of req.controller.permissions.owners) {
+      for (const owner of req.controller.permissions.owners) {
         const userId = req.user._id;
         const resourceOwnerId = req.rawResources[owner];
 
