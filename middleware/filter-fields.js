@@ -78,7 +78,7 @@ module.exports = {
         }
       } else {
         const resource = filterRecord(req.rawResources, permissions, '_root');
-        req.resource = Object.keys(resource).length > 0 ? resource : null;
+        req.resource = Object.keys(resource).length > 0 ? resource : {};
       }
 
       if (!req.resource || req.resource.length < 1) req.rawResourcesCount = 0;
