@@ -7,7 +7,6 @@
   "disallowSpaceBeforeComma": true,
   "disallowYodaConditions": true,
   "requireCapitalizedConstructors": true,
-  "requireCapitalizedConstructorsNew": true,
   "requireCommaBeforeLineBreak": true,
   "requireEarlyReturn": true,
   "requireLineBreakAfterVariableAssignment": true,
