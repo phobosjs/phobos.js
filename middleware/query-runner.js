@@ -29,12 +29,12 @@ module.exports = {
         count = Model.count(req.searchParams);
 
         if (req.query.page) {
-          const perPage = parseInt(req.query.perPage) || 20;
+          const perPage = Number(req.query.perPage || 20);
 
-          query = query.skip((parseInt(req.query.page) * perPage) - perPage);
+          query = query.skip((Number(req.query.page) * perPage) - perPage);
           query = query.limit(perPage);
         } else {
-          query = query.limit(parseInt(req.query.limit) || 20);
+          query = query.limit(Number(req.query.limit || 20));
         }
 
         if (req.query.order) query = query.sort(req.query.order);
