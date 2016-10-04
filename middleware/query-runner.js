@@ -34,7 +34,7 @@ module.exports = {
           query = query.skip((parseInt(req.query.page) * perPage) - perPage);
           query = query.limit(perPage);
         } else {
-          query = query.limit(req.query.limit || 20);
+          query = query.limit(parseInt(req.query.limit) || 20);
         }
 
         if (req.query.order) query = query.sort(req.query.order);
