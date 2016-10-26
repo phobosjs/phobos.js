@@ -76,13 +76,13 @@ module.exports = {
           const record = filterRecord(rawResource, permissions, '_root');
           if (Object.keys(record).length > 0) req.resource.push(record);
         }
-      } else {
+      } else if (req.rawResources) {
         const resource = filterRecord(req.rawResources, permissions, '_root');
         req.resource = Object.keys(resource).length > 0 ? resource : {};
       }
 
       if (!req.resource || req.resource.length < 1) req.rawResourcesCount = 0;
-      if (req.resource === null) return next({ status: 404 });
+      if (req.rawResources === null) return next({ status: 404 });
 
       return next();
     };
