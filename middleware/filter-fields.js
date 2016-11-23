@@ -28,6 +28,10 @@ function filterRecord(record, permissions, key) {
   const cleanResource = {};
 
   for (const field of allowed) {
+    // Remove extra id virtual param from Mongoose
+    if (field === 'id') continue;
+    if (record[field].hasOwnProperty('id')) delete record[field].id;
+
     const isRelation = Object.keys(permissions).indexOf(field) > -1;
     const exists = typeof record[field] !== 'undefined';
 
