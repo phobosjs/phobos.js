@@ -24,7 +24,9 @@ module.exports = {
 
           let searchValue = req.parsedQuery[field];
 
-          if (searchValue.indexOf(',') > -1) {
+          console.log(field, searchValue)
+
+          if (typeof searchValue === 'string' && searchValue.indexOf(',') > -1) {
             searchValue = { $in: req.parsedQuery[field].split(',') };
           }
 
