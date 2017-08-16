@@ -20,7 +20,15 @@ module.exports = {
         const allowed = req.controller.permissions.searchableBy;
 
         for (let field of allowed) {
-          if (req.parsedQuery[field]) req.searchParams[field] = req.parsedQuery[field];
+          if (!req.parsedQuery[field]) continue;
+
+          let searchValue = req.parsedQuery[field];
+
+          if (searchValue.indexOf(',') > -1) {
+            searchValue = { $in: req.parsedQuery[field].split(',') };
+          }
+
+          req.searchParams[field] = searchValue;
         }
       }
 
