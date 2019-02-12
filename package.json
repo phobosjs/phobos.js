@@ -1,6 +1,6 @@
 {
   "name": "phobosjs",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "A small JSON API framework for Mongoose and Express that takes all the annoyance of middleware out of your hands",
   "main": "index.js",
   "scripts": {
@@ -27,8 +27,8 @@
     "inflected": "^1.1.7",
     "jsonwebtoken": "^8.3.0",
     "method-override": "^2.3.10",
-    "mongoose": "^4.13.14",
-    "morgan": "^1.9.0",
+    "mongoose": "^5.4.11",
+    "morgan": "^1.9.1",
     "response-time": "2.x"
   }
 }
