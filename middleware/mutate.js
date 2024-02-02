@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /*
   mutate.js
@@ -7,12 +7,11 @@
   this step, and that's creating, editing and deleting.
 */
 
-const Inflector = require('inflected');
-const Helpers = require('../lib/helpers');
+const Inflector = require("inflected");
+const Helpers = require("../lib/helpers");
 
 module.exports = {
-
-  inject: [ 'DS' ],
+  inject: ["DS"],
 
   middleware: function mutateMiddleware(DS) {
     return function mutate(req, res, next) {
@@ -21,17 +20,23 @@ module.exports = {
       const requestType = Helpers.determineRequestType(req);
       const permissions = req.controller.permissions[requestType];
 
-      if (['edit', 'create', 'delete'].indexOf(requestType) === -1) return next();
+      if (["edit", "create", "delete"].indexOf(requestType) === -1)
+        return next();
 
-      const resource = Inflector.singularize(req.path.split('/')[1]);
+      const resource = Inflector.singularize(req.path.split("/")[1]);
       const params = req.body[resource];
 
-      if ((!resource && req.controller._rest) && (!params || requestType !== 'delete')) return next({
-        translation: 'api.error.auth.invalid_request',
-        code: 400
-      });
+      if (
+        !resource &&
+        req.controller._rest &&
+        (!params || requestType !== "delete")
+      )
+        return next({
+          translation: "api.error.auth.invalid_request",
+          code: 400,
+        });
 
-      if (requestType === 'delete') {
+      if (requestType === "delete") {
         req.rawResources.remove((err) => {
           req.mutated = true;
           req.rawResources = undefined;
@@ -39,12 +44,16 @@ module.exports = {
           return next(err);
         });
       } else {
-        const allowedFields = Helpers.getAllowedFields(permissions, req.appliedScope);
+        const allowedFields = Helpers.getAllowedFields(
+          permissions,
+          req.appliedScope
+        );
 
-        if (!allowedFields) return next({
-          translation: 'api.error.auth.insufficient_privilege',
-          code: 401
-        });
+        if (!allowedFields)
+          return next({
+            translation: "api.error.auth.insufficient_privilege",
+            code: 401,
+          });
 
         let diffs = {};
 
@@ -69,6 +78,5 @@ module.exports = {
         });
       }
     };
-  }
-
+  },
 };
