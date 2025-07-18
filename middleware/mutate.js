@@ -37,12 +37,14 @@ module.exports = {
         });
 
       if (requestType === "delete") {
-        req.rawResources.remove((err) => {
-          req.mutated = true;
-          req.rawResources = undefined;
-
-          return next(err);
-        });
+        req.rawResources
+          .deleteOne()
+          .then(() => {
+            req.mutated = true;
+            req.rawResources = undefined;
+            next();
+          })
+          .catch(next);
       } else {
         const allowedFields = Helpers.getAllowedFields(
           permissions,
