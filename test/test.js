@@ -1,899 +1,914 @@
-'use strict';
+"use strict";
 
 /* globals before, after, describe, it, beforeEach, afterEach */
 
-var chai = require('chai');
+var chai = require("chai");
 
-chai.use(require('chai-as-promised'));
+chai.use(require("chai-as-promised"));
 
 var expect = chai.expect;
-var httpMocks = require('node-mocks-http');
-var Phobos = require('../index');
+var httpMocks = require("node-mocks-http");
+var Phobos = require("../index");
 var Instance = new Phobos();
-var Router = require('../lib/router');
+var Router = require("../lib/router");
 
-var Bearer = new (require('../lib/bearer'))('phobos__test');
-var MiddlewareLoader = require('../lib/middleware-loader');
+var Bearer = new (require("../lib/bearer"))("phobos__test");
+var MiddlewareLoader = require("../lib/middleware-loader");
 
-Instance.addSchema(require('./support/sample_schema'));
+Instance.addSchema(require("./support/sample_schema"));
 
-var DS = Instance.initDb();
+// var DS = Instance.initDb();
+let DS;
+let Middleware;
 
 var connection = Instance.database.connection;
 
-before(function(done) {
-  connection.on('open', function() {
-    connection.db.dropDatabase();
-    done();
+before(async () => {
+  await Instance.initDb();
+  DS = Instance.DS;
+  Middleware = new MiddlewareLoader({ DS });
+
+  await connection.dropDatabase();
+});
+
+after(async () => {
+  await Instance.destroy();
+});
+
+describe("[BASE]", function () {
+  it("initializes the Phobos instance object properly", function () {
+    expect(Instance).to.have.property("_options");
+  });
+
+  it("accepts options object to override defaults", function () {
+    Instance.set("bearerTokenSignature", "phobos__test");
+    expect(Instance._options.bearerTokenSignature).to.equal("phobos__test");
   });
 });
 
-after(function(done) {
-  connection.close(done);
-});
-
-describe('[BASE]', function() {
-
-  it('initializes the Phobos instance object properly', function() {
-    expect(Instance).to.have.property('_options');
-  });
-
-  it('accepts options object to override defaults', function() {
-    Instance.set('bearerTokenSignature', 'phobos__test');
-    expect(Instance._options.bearerTokenSignature).to.equal('phobos__test');
-  });
-
-});
-
-describe('[LIBRARIES]', function() {
-
-  describe('Bearer Token', function() {
-    it('generates and validates a given bearer token', function() {
-      var token = Bearer.generate('__token__');
-      expect(Bearer.verify(token)).to.equal('__token__');
+describe("[LIBRARIES]", function () {
+  describe("Bearer Token", function () {
+    it("generates and validates a given bearer token", function () {
+      var token = Bearer.generate("__token__");
+      expect(Bearer.verify(token)).to.equal("__token__");
     });
-
   });
 
-  describe('Middleware Loader', function() {
+  describe("Middleware Loader", function () {
     var instance;
 
-    beforeEach(function(done) {
-      instance = new MiddlewareLoader({ test: 'foobar' });
+    beforeEach(function (done) {
+      instance = new MiddlewareLoader({ test: "foobar" });
       done();
     });
 
-    afterEach(function(done) {
+    afterEach(function (done) {
       instance = undefined;
       done();
     });
 
-    it('loads a plain middleware function', function() {
-      var func = function(err) {
-        return 'sample function';
+    it("loads a plain middleware function", function () {
+      var func = function (err) {
+        return "sample function";
       };
 
-      expect(instance.load(func)()).to.equal('sample function');
+      expect(instance.load(func)()).to.equal("sample function");
     });
 
-    it('Loads a middleware loader object with dependencies', function() {
-      instance.dependencies.SampleRequirement = 'this sample requirement works';
+    it("Loads a middleware loader object with dependencies", function () {
+      instance.dependencies.SampleRequirement = "this sample requirement works";
       var obj = {
-        inject: [ 'SampleRequirement' ],
-        middleware: function(injection) {
-          return function(err) {
+        inject: ["SampleRequirement"],
+        middleware: function (injection) {
+          return function (err) {
             return injection;
           };
-        }
+        },
       };
 
-      expect(instance.load(obj)()).to.equal('this sample requirement works');
+      expect(instance.load(obj)()).to.equal("this sample requirement works");
     });
   });
 
-  describe('Router', function() {
-    var instance = new Router(Instance.server, DS);
+  describe("Router", function () {
+    let instance;
 
-    it('Creates a RESTful resource out of a controller', function() {
-      instance.addController(require('./support/sample_controller'));
+    before(() => {
+      instance = new Router(Instance.server, DS);
+    });
+
+    it("Creates a RESTful resource out of a controller", function () {
+      instance.addController(require("./support/sample_controller"));
       instance.mount();
 
       expect(instance._express._router.stack).to.be.instanceOf(Array);
 
-      expect(instance._express._router.stack[2].route.path).to.equal('/users/');
-      expect(instance._express._router.stack[2].route.methods).to.have.property('get');
+      expect(instance._express._router.stack[2].route.path).to.equal("/users/");
+      expect(instance._express._router.stack[2].route.methods).to.have.property(
+        "get"
+      );
 
-      expect(instance._express._router.stack[3].route.path).to.equal('/users/:id');
-      expect(instance._express._router.stack[3].route.methods).to.have.property('get');
+      expect(instance._express._router.stack[3].route.path).to.equal(
+        "/users/:id"
+      );
+      expect(instance._express._router.stack[3].route.methods).to.have.property(
+        "get"
+      );
 
-      expect(instance._express._router.stack[4].route.path).to.equal('/users/');
-      expect(instance._express._router.stack[4].route.methods).to.have.property('post');
+      expect(instance._express._router.stack[4].route.path).to.equal("/users/");
+      expect(instance._express._router.stack[4].route.methods).to.have.property(
+        "post"
+      );
 
-      expect(instance._express._router.stack[5].route.path).to.equal('/users/:id');
-      expect(instance._express._router.stack[5].route.methods).to.have.property('put');
+      expect(instance._express._router.stack[5].route.path).to.equal(
+        "/users/:id"
+      );
+      expect(instance._express._router.stack[5].route.methods).to.have.property(
+        "put"
+      );
 
-      expect(instance._express._router.stack[6].route.path).to.equal('/users/:id');
-      expect(instance._express._router.stack[6].route.methods).to.have.property('delete');
+      expect(instance._express._router.stack[6].route.path).to.equal(
+        "/users/:id"
+      );
+      expect(instance._express._router.stack[6].route.methods).to.have.property(
+        "delete"
+      );
     });
   });
-
 });
 
-describe('[MIDDLEWARE]', function() {
-  var Middleware = new MiddlewareLoader({ DS: DS });
+describe("[MIDDLEWARE]", function () {
   var user_id;
 
-  beforeEach(function(done) {
-    DS.User.remove({}, function() {
-      DS.User.create({
-        username: 'testie_mcfly',
-        scope: [ 'user' ],
-        password: 'hello_world123'
-      }, function(err, user) {
-        user_id = user._id;
-        return done();
-      });
+  beforeEach(async () => {
+    await DS.User.deleteMany({});
+    const user = await DS.User.create({
+      username: "testie_mcfly",
+      scope: ["user"],
+      password: "hello_world123",
     });
+    user_id = user._id;
   });
 
-  describe('Base', function() {
-    var middleware = Middleware.load(require('../middleware/base'));
-
-    it('sets per-request variables properly for a RESTful route', function() {
-      var mounted = middleware({
-        mountedAt: 'users',
-        name: 'index'
-      }, {
-        scope: [ '*' ],
-        responder: function() {}
-      }, true);
+  describe("Base", function () {
+    let middleware;
+    before(() => {
+      middleware = Middleware.load(require("../middleware/base"));
+    });
+    it("sets per-request variables properly for a RESTful route", function () {
+      var mounted = middleware(
+        {
+          mountedAt: "users",
+          name: "index",
+        },
+        {
+          scope: ["*"],
+          responder: function () {},
+        },
+        true
+      );
 
       var request = httpMocks.createRequest({
         route: {
-          path: '/users'
+          path: "/users",
         },
         phobos: {
           permissions: {
             User: {
-              '*': true
-            }
-          }
-        }
+              "*": true,
+            },
+          },
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      mounted(request, response, function(err) {
+      mounted(request, response, function (err) {
         expect(request.controller._rest).to.be.true;
-        expect(request.controller.spec).to.have.property('mountedAt');
-        expect(request.controller.spec).to.have.property('name');
+        expect(request.controller.spec).to.have.property("mountedAt");
+        expect(request.controller.spec).to.have.property("name");
         expect(request.controller.action).to.be.a.function;
-        expect(request.controller.permissions).to.have.property('*');
-        expect(request.controller.model).to.equal('User');
+        expect(request.controller.permissions).to.have.property("*");
+        expect(request.controller.model).to.equal("User");
       });
     });
 
-    it('sets per-request variables properly for a non-RESTful route', function() {
-      var mounted = middleware({
-        name: 'sample',
-        method: 'get',
-        endpoint: 'sample'
-      }, {
-        scope: [ '*' ],
-        responder: function() {}
-      }, false);
+    it("sets per-request variables properly for a non-RESTful route", function () {
+      var mounted = middleware(
+        {
+          name: "sample",
+          method: "get",
+          endpoint: "sample",
+        },
+        {
+          scope: ["*"],
+          responder: function () {},
+        },
+        false
+      );
 
       var request = httpMocks.createRequest({
         route: {
-          path: '/users/sample'
+          path: "/users/sample",
         },
         phobos: {
           permissions: {
             User: {
-              '*': true
-            }
-          }
-        }
+              "*": true,
+            },
+          },
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      mounted(request, response, function(err) {
+      mounted(request, response, function (err) {
         expect(err).to.be.undefined;
         expect(request.controller._rest).to.be.false;
-        expect(request.controller.spec).to.have.property('method');
-        expect(request.controller.spec).to.have.property('endpoint');
-        expect(request.controller.spec).to.have.property('name');
+        expect(request.controller.spec).to.have.property("method");
+        expect(request.controller.spec).to.have.property("endpoint");
+        expect(request.controller.spec).to.have.property("name");
         expect(request.controller.action).to.be.a.function;
-        expect(request.controller.permissions).to.have.property('*');
-        expect(request.controller.model).to.equal('User');
+        expect(request.controller.permissions).to.have.property("*");
+        expect(request.controller.model).to.equal("User");
       });
     });
-
   });
 
-  describe('Bearer token', function() {
-    var middleware = require('../middleware/bearer');
+  describe("Bearer token", function () {
+    var middleware = require("../middleware/bearer");
 
-    it('properly decodes a provided bearer token to payload', function() {
+    it("properly decodes a provided bearer token to payload", function () {
       var request = httpMocks.createRequest({
         query: {
-          auth_token: Bearer.generate('__test_user')
+          auth_token: Bearer.generate("__test_user"),
         },
         phobos: {
           options: {
-            bearerTokenSignature: 'phobos__test'
-          }
-        }
+            bearerTokenSignature: "phobos__test",
+          },
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function(err) {
+      middleware(request, response, function (err) {
         expect(err).to.be.undefined;
-        expect(request.bearerToken).to.equal('__test_user');
+        expect(request.bearerToken).to.equal("__test_user");
       });
     });
 
-    it('in case of no token, automatically demote user to ALL (*) scope', function() {
+    it("in case of no token, automatically demote user to ALL (*) scope", function () {
       var request = httpMocks.createRequest({
         phobos: {
           options: {
-            bearerTokenSignature: 'phobos__test'
-          }
+            bearerTokenSignature: "phobos__test",
+          },
         },
         controller: {
-          scopes: [ '*' ]
-        }
+          scopes: ["*"],
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function(err) {
+      middleware(request, response, function (err) {
         expect(err).to.be.undefined;
         expect(request.bearerToken).to.be.undefined;
       });
     });
-
   });
 
-  describe('Identification of user', function() {
-    var middleware = Middleware.load(require('../middleware/user'));
-
-    it('and got to next() when there is no token', function() {
+  describe("Identification of user", function () {
+    let middleware;
+    before(() => {
+      middleware = Middleware.load(require("../middleware/user"));
+    });
+    it("and got to next() when there is no token", function () {
       var request = httpMocks.createRequest({
         phobos: {
           options: {
-            scopeCarrier: { model: 'User' }
-          }
+            scopeCarrier: { model: "User" },
+          },
         },
         controller: {
-          scopes: [ '*' ]
-        }
+          scopes: ["*"],
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function(err) {
+      middleware(request, response, function (err) {
         expect(err).to.be.undefined;
         expect(request.user).to.be.undefined;
       });
     });
 
-    it('and set req.user in case of a valid token', function(done) {
+    it("and set req.user in case of a valid token", function (done) {
       var request = httpMocks.createRequest({
         phobos: {
           options: {
-            scopeCarrier: { model: 'User' }
-          }
+            scopeCarrier: { model: "User" },
+          },
         },
         controller: {
-          scopes: [ '*' ]
+          scopes: ["*"],
         },
-        bearerToken: user_id
+        bearerToken: user_id,
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function(err) {
+      middleware(request, response, function (err) {
         expect(err).to.be.undefined;
-        expect(request.user.username).to.equal('testie_mcfly');
+        expect(request.user.username).to.equal("testie_mcfly");
         done();
       });
     });
-
   });
 
-  describe('Resource query', function() {
-    var middleware = Middleware.load(require('../middleware/query-parser'));
+  describe("Resource query", function () {
+    let middleware;
+    before(() => {
+      middleware = Middleware.load(require("../middleware/query-parser"));
+    });
 
-    it('adds only whitelisted search params to the query object', function() {
+    it("adds only whitelisted search params to the query object", function () {
       var request = httpMocks.createRequest({
         controller: {
           permissions: {
-            searchableBy: [ 'username' ]
-          }
+            searchableBy: ["username"],
+          },
         },
         parsedQuery: {
-          username: 'test',
-          password: 'top secret'
-        }
+          username: "test",
+          password: "top secret",
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function(err) {
+      middleware(request, response, function (err) {
         expect(err).to.be.undefined;
-        expect(request.searchParams).to.not.have.property('password');
-        expect(request.searchParams).to.have.property('username');
+        expect(request.searchParams).to.not.have.property("password");
+        expect(request.searchParams).to.have.property("username");
       });
     });
-
   });
 
-  describe('Includable parser', function() {
-    var middleware = Middleware.load(require('../middleware/includables'));
+  describe("Includable parser", function () {
+    let middleware;
+    before(() => {
+      middleware = Middleware.load(require("../middleware/includables"));
+    });
 
     var request = httpMocks.createRequest({
       controller: {
-        model: 'Task'
+        model: "Task",
       },
       query: {
-        include: 'owner'
-      }
+        include: "owner",
+      },
     });
 
     var response = httpMocks.createResponse();
 
-    it('detects includable objects', function() {
-      middleware(request, response, function() {
-        expect(request).to.have.property('includeRelations');
-        expect(request.includeRelations).to.be.an('object');
-        expect(request.includeRelations).ownProperty('owner');
-        expect(request.includeRelations.owner.model).to.equal('User');
-        expect(request.includeRelations.owner.field).to.equal('owner');
+    it("detects includable objects", function () {
+      middleware(request, response, function () {
+        expect(request).to.have.property("includeRelations");
+        expect(request.includeRelations).to.be.an("object");
+        expect(request.includeRelations).ownProperty("owner");
+        expect(request.includeRelations.owner.model).to.equal("User");
+        expect(request.includeRelations.owner.field).to.equal("owner");
       });
     });
-
   });
 
-  describe('Query runner', function() {
-    var middleware = Middleware.load(require('../middleware/query-runner'));
-
-    it('runs a findOne query when an ID is given in the route', function(done) {
+  describe("Query runner", function () {
+    let middleware;
+    before(() => {
+      middleware = Middleware.load(require("../middleware/query-runner"));
+    });
+    it("runs a findOne query when an ID is given in the route", function (done) {
       var request = httpMocks.createRequest({
         controller: {
-          model: 'User'
+          model: "User",
         },
         params: {
-          id: user_id
-        }
+          id: user_id,
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function(err) {
-        expect(request).to.have.property('rawResources');
-        expect(request.rawResources.username).to.equal('testie_mcfly');
+      middleware(request, response, function (err) {
+        expect(request).to.have.property("rawResources");
+        expect(request.rawResources.username).to.equal("testie_mcfly");
         done();
       });
     });
 
-    it('runs a find query when no ID when on index', function(done) {
+    it("runs a find query when no ID when on index", function (done) {
       var request = httpMocks.createRequest({
         controller: {
-          model: 'User'
-        }
+          model: "User",
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function(err) {
-        expect(request).to.have.property('rawResources');
-        expect(request).to.have.property('rawResourcesCount');
+      middleware(request, response, function (err) {
+        expect(request).to.have.property("rawResources");
+        expect(request).to.have.property("rawResourcesCount");
         expect(request.rawResources).to.be.instanceOf(Array);
         expect(request.rawResourcesCount).to.equal(1);
-        expect(request.rawResources[0].username).to.equal('testie_mcfly');
+        expect(request.rawResources[0].username).to.equal("testie_mcfly");
         done();
       });
     });
 
-    it('searches query params on index and finds result', function(done) {
+    it("searches query params on index and finds result", function (done) {
       var request = httpMocks.createRequest({
         controller: {
-          model: 'User'
+          model: "User",
         },
         searchParams: {
-          username: 'testie_mcfly'
-        }
+          username: "testie_mcfly",
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function(err) {
-        expect(request).to.have.property('rawResources');
-        expect(request).to.have.property('rawResourcesCount');
+      middleware(request, response, function (err) {
+        expect(request).to.have.property("rawResources");
+        expect(request).to.have.property("rawResourcesCount");
         expect(request.rawResources).to.be.instanceOf(Array);
         expect(request.rawResourcesCount).to.equal(1);
         done();
       });
     });
 
-    it('searches query params on index and finds 0 when no match', function(done) {
+    it("searches query params on index and finds 0 when no match", function (done) {
       var request = httpMocks.createRequest({
         controller: {
-          model: 'User'
+          model: "User",
         },
         searchParams: {
-          username: 'testie_poop'
-        }
+          username: "testie_poop",
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function(err) {
-        expect(request).to.have.property('rawResources');
-        expect(request).to.have.property('rawResourcesCount');
+      middleware(request, response, function (err) {
+        expect(request).to.have.property("rawResources");
+        expect(request).to.have.property("rawResourcesCount");
         expect(request.rawResources).to.be.instanceOf(Array);
         expect(request.rawResourcesCount).to.equal(0);
         done();
       });
     });
-
   });
 
-  describe('Scope catch', function() {
-    var middleware = Middleware.load(require('../middleware/scope-catch'));
-
-    it('gives the `*` scope to a non-authenticated user', function() {
+  describe("Scope catch", function () {
+    let middleware;
+    before(() => {
+      middleware = Middleware.load(require("../middleware/scope-catch"));
+    });
+    it("gives the `*` scope to a non-authenticated user", function () {
       var request = httpMocks.createRequest({
         phobos: {
           options: {
-            availableScopes: [ '*', 'user', 'owner', 'admin' ]
-          }
+            availableScopes: ["*", "user", "owner", "admin"],
+          },
         },
         rawResources: {
-          _id: '12121212',
-          user: 'test_owner_user'
+          _id: "12121212",
+          user: "test_owner_user",
         },
         controller: {
-          scopes: [ '*', 'user' ]
-        }
+          scopes: ["*", "user"],
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function() {
-        expect(request).to.have.property('caughtScope');
+      middleware(request, response, function () {
+        expect(request).to.have.property("caughtScope");
         expect(request.caughtScope).to.be.instanceOf(Array);
-        expect(request.caughtScope).to.contain('*');
-        expect(request.caughtScope).to.not.contain('user');
+        expect(request.caughtScope).to.contain("*");
+        expect(request.caughtScope).to.not.contain("user");
       });
     });
 
-    it('detects `user` scope', function() {
+    it("detects `user` scope", function () {
       var request = httpMocks.createRequest({
         user: {
-          _id: 'test_owner_user',
-          scope: [ 'user' ]
+          _id: "test_owner_user",
+          scope: ["user"],
         },
         phobos: {
           options: {
             scopeCarrier: {
-              availableScopes: [ '*', 'user', 'owner', 'admin' ]
-            }
-          }
+              availableScopes: ["*", "user", "owner", "admin"],
+            },
+          },
         },
         rawResources: {
-          _id: '12121212',
-          user: 'test_owner_user'
+          _id: "12121212",
+          user: "test_owner_user",
         },
         controller: {
-          scopes: [ 'user', 'owner' ]
-        }
+          scopes: ["user", "owner"],
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function() {
-        expect(request).to.have.property('caughtScope');
+      middleware(request, response, function () {
+        expect(request).to.have.property("caughtScope");
         expect(request.caughtScope).to.be.instanceOf(Array);
-        expect(request.caughtScope).to.contain('user');
+        expect(request.caughtScope).to.contain("user");
       });
     });
-
   });
 
-  describe('Ownership', function() {
-    var middleware = Middleware.load(require('../middleware/ownership'));
-
-    it('correctly grants ownership', function() {
+  describe("Ownership", function () {
+    let middleware;
+    before(() => {
+      middleware = Middleware.load(require("../middleware/ownership"));
+    });
+    it("correctly grants ownership", function () {
       var response = httpMocks.createResponse();
 
       var request = httpMocks.createRequest({
         rawResources: {
-          _id: '12121212',
-          owner: 'test_owner_user'
+          _id: "12121212",
+          owner: "test_owner_user",
         },
         user: {
-          _id: 'test_owner_user'
+          _id: "test_owner_user",
         },
         controller: {
           permissions: {
-            owners: [ 'owner' ]
-          }
-        }
+            owners: ["owner"],
+          },
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function() {
-        expect(request).to.have.property('ownership');
+      middleware(request, response, function () {
+        expect(request).to.have.property("ownership");
         expect(request.ownership).to.be.true;
       });
     });
 
-    it('correctly denies ownership', function() {
+    it("correctly denies ownership", function () {
       var response = httpMocks.createResponse();
 
       var request = httpMocks.createRequest({
         rawResources: {
-          _id: '12121212',
-          owner: 'not_test_owner_user'
+          _id: "12121212",
+          owner: "not_test_owner_user",
         },
         user: {
-          _id: 'test_owner_user'
+          _id: "test_owner_user",
         },
         controller: {
           permissions: {
-            owners: [ 'owner' ]
-          }
-        }
+            owners: ["owner"],
+          },
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function() {
-        expect(request).to.have.property('ownership');
+      middleware(request, response, function () {
+        expect(request).to.have.property("ownership");
         expect(request.ownership).to.not.be.true;
       });
     });
   });
 
-  describe('Apply scope', function() {
-    var middleware = Middleware.load(require('../middleware/apply-scope'));
-
-    it('non-elevated users always get `*`', function() {
+  describe("Apply scope", function () {
+    let middleware;
+    before(() => {
+      middleware = Middleware.load(require("../middleware/apply-scope"));
+    });
+    it("non-elevated users always get `*`", function () {
       var request = httpMocks.createRequest({
-        caughtScope: [ '*' ],
-        method: 'GET',
-        user: {}
+        caughtScope: ["*"],
+        method: "GET",
+        user: {},
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function() {
-        expect(request).to.have.property('appliedScope');
-        expect(request.appliedScope).to.equal('*');
+      middleware(request, response, function () {
+        expect(request).to.have.property("appliedScope");
+        expect(request.appliedScope).to.equal("*");
       });
     });
 
-    it('owners get ownership elevated scope applied', function() {
+    it("owners get ownership elevated scope applied", function () {
       var request = httpMocks.createRequest({
-        caughtScope: [ '*' ],
-        method: 'GET',
+        caughtScope: ["*"],
+        method: "GET",
         user: {},
         ownership: true,
         controller: {
-          scopes: [ '*', 'owner' ],
+          scopes: ["*", "owner"],
           _rest: true,
           permissions: {
-            read: true
-          }
-        }
+            read: true,
+          },
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function() {
-        expect(request).to.have.property('appliedScope');
-        expect(request.appliedScope).to.equal('owner');
+      middleware(request, response, function () {
+        expect(request).to.have.property("appliedScope");
+        expect(request.appliedScope).to.equal("owner");
       });
     });
 
-    it('a user with elevated caught scope will have that applied', function() {
+    it("a user with elevated caught scope will have that applied", function () {
       var request = httpMocks.createRequest({
-        caughtScope: [ '*', 'admin' ],
-        method: 'GET',
+        caughtScope: ["*", "admin"],
+        method: "GET",
         user: {},
         ownership: false,
         controller: {
-          scopes: [ '*', 'owner', 'admin' ],
+          scopes: ["*", "owner", "admin"],
           _rest: true,
           permissions: {
-            read: true
-          }
-        }
+            read: true,
+          },
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function() {
-        expect(request).to.have.property('appliedScope');
-        expect(request.appliedScope).to.equal('admin');
+      middleware(request, response, function () {
+        expect(request).to.have.property("appliedScope");
+        expect(request.appliedScope).to.equal("admin");
       });
     });
 
-    it('a non-resourceful route gets the topmost scope from the user', function() {
+    it("a non-resourceful route gets the topmost scope from the user", function () {
       var request = httpMocks.createRequest({
-        caughtScope: [ '*', 'admin' ],
-        method: 'GET',
+        caughtScope: ["*", "admin"],
+        method: "GET",
         user: {
-          scope: [ 'admin' ]
+          scope: ["admin"],
         },
         controller: {
-          scopes: [ '*', 'owner', 'admin' ],
+          scopes: ["*", "owner", "admin"],
           _rest: false,
           permissions: {
-            read: true
-          }
-        }
+            read: true,
+          },
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function() {
+      middleware(request, response, function () {
         console.log(request.appliedScope);
-        expect(request).to.have.property('appliedScope');
-        expect(request.appliedScope).to.equal('admin');
+        expect(request).to.have.property("appliedScope");
+        expect(request.appliedScope).to.equal("admin");
       });
     });
   });
 
-  describe('Mutation', function() {
-    var middleware = Middleware.load(require('../middleware/mutate'));
-    var resource;
-
-    beforeEach(function(done) {
-      DS.User.remove({}, function() {
-        DS.User.create({
-          username: 'testie_mcfly',
-          scope: [ 'user' ],
-          password: 'hello_world123'
-        }, function(err, user) {
-          resource = user;
-          return done();
-        });
-      });
+  describe("Mutation", function () {
+    let middleware;
+    before(() => {
+      middleware = Middleware.load(require("../middleware/mutate"));
     });
 
-    it('ignores reads', function() {
-      var request = httpMocks.createRequest({
-        appliedScope: [ '*' ],
-        method: 'GET',
+    let resource;
+
+    // Use Mongoose 8-safe APIs
+    beforeEach(function (done) {
+      (async () => {
+        await DS.User.deleteMany({});
+        resource = await DS.User.create({
+          username: "testie_mcfly",
+          scope: ["user"],
+          password: "hello_world123",
+        });
+        done();
+      })().catch(done);
+    });
+
+    it("ignores reads", function () {
+      const request = httpMocks.createRequest({
+        appliedScope: ["*"],
+        method: "GET",
         user: {},
         ownership: false,
         controller: {
-          scopes: [ 'owner' ],
+          scopes: ["owner"],
           _rest: true,
-          permissions: {
-            edit: { '*': false }
-          }
+          permissions: { edit: { "*": false } },
         },
-        path: '/users/' + resource._id
+        path: "/users/" + resource._id,
       });
 
-      var response = httpMocks.createResponse();
+      const response = httpMocks.createResponse();
 
-      middleware(request, response, function(err) {
+      middleware(request, response, function (err) {
         expect(err).to.be.undefined;
         expect(request.mutated).to.equal(false);
       });
     });
 
-    it('denies a write when there is insufficient permissions', function() {
-      var request = httpMocks.createRequest({
-        appliedScope: [ '*' ],
-        method: 'PUT',
+    it("denies a write when there is insufficient permissions", function () {
+      const request = httpMocks.createRequest({
+        appliedScope: ["*"],
+        method: "PUT",
         user: {},
         ownership: false,
         controller: {
-          scopes: [ 'owner' ],
+          scopes: ["owner"],
           _rest: true,
-          permissions: {
-            edit: { '*': false }
-          }
+          permissions: { edit: { "*": false } },
         },
-        path: '/users/' + resource._id,
+        path: "/users/" + resource._id,
         rawResources: resource,
-        body: {
-          user: {}
-        }
+        body: { user: {} },
       });
 
-      var response = httpMocks.createResponse();
+      const response = httpMocks.createResponse();
 
-      middleware(request, response, function(err) {
+      middleware(request, response, function (err) {
         expect(err).to.be.defined;
-        expect(err.translation).to.equal('api.error.auth.insufficient_privilege');
+        expect(err.translation).to.equal(
+          "api.error.auth.insufficient_privilege"
+        );
       });
     });
 
-    it('creates a resource', function(done) {
-      var request = httpMocks.createRequest({
-        appliedScope: [ '*' ],
-        method: 'POST',
+    it("creates a resource", function (done) {
+      const request = httpMocks.createRequest({
+        appliedScope: ["*"],
+        method: "POST",
         user: {},
         controller: {
-          scopes: [ '*' ],
+          scopes: ["*"],
           _rest: true,
-          permissions: {
-            create: true
-          },
-          model: 'User'
+          permissions: { create: true },
+          model: "User",
         },
-        path: '/users',
+        path: "/users",
         body: {
-          user: {
-            username: 'new_user_mcfly',
-            password: 'hello_world123'
-          }
+          user: { username: "new_user_mcfly", password: "hello_world123" },
         },
-        rawResources: {}
+        rawResources: {},
       });
 
-      var response = httpMocks.createResponse();
+      const response = httpMocks.createResponse();
 
-      middleware(request, response, function(err) {
+      middleware(request, response, function () {
         expect(request.mutated).to.be.true;
-        expect(request.rawResources.username).to.equal('new_user_mcfly');
-
+        expect(request.rawResources.username).to.equal("new_user_mcfly");
         done();
       });
     });
 
-    it('updates a resource', function(done) {
-      var request = httpMocks.createRequest({
-        appliedScope: [ '*' ],
-        method: 'PUT',
+    it("updates a resource", function (done) {
+      const request = httpMocks.createRequest({
+        appliedScope: ["*"],
+        method: "PUT",
         user: {},
         controller: {
-          scopes: [ '*' ],
+          scopes: ["*"],
           _rest: true,
-          permissions: {
-            edit: true
-          },
-          model: 'User'
+          permissions: { edit: true },
+          model: "User",
         },
-        path: '/users/' + resource._id,
-        body: {
-          user: {
-            username: 'modified_user_mcfly'
-          }
-        },
-        rawResources: resource
+        path: "/users/" + resource._id,
+        body: { user: { username: "modified_user_mcfly" } },
+        rawResources: resource,
       });
 
-      var response = httpMocks.createResponse();
+      const response = httpMocks.createResponse();
 
-      middleware(request, response, function(err) {
+      middleware(request, response, function () {
         expect(request.mutated).to.be.true;
-        expect(request.rawResources.username).to.equal('modified_user_mcfly');
-
+        expect(request.rawResources.username).to.equal("modified_user_mcfly");
         done();
       });
     });
 
-    it('deletes a resource', function(done) {
-      var _id = resource._id;
+    it("deletes a resource", function (done) {
+      const _id = resource._id;
 
-      var request = httpMocks.createRequest({
-        appliedScope: [ '*' ],
-        method: 'DELETE',
+      const request = httpMocks.createRequest({
+        appliedScope: ["*"],
+        method: "DELETE",
         user: {},
         controller: {
-          scopes: [ '*' ],
+          scopes: ["*"],
           _rest: true,
-          permissions: {
-            delete: true
-          },
-          model: 'User'
+          permissions: { delete: true },
+          model: "User",
         },
-        path: '/users/' + resource._id,
-        rawResources: resource
+        path: "/users/" + resource._id,
+        rawResources: resource,
       });
 
-      var response = httpMocks.createResponse();
+      const response = httpMocks.createResponse();
 
-      middleware(request, response, function(err) {
-        DS.User.findOne(_id, function(err, user) {
-          expect(request.mutated).to.be.true;
-          expect(user).to.be.null;
-
-          done();
-        });
+      middleware(request, response, async function () {
+        const user = await DS.User.findById(_id);
+        expect(request.mutated).to.be.true;
+        expect(user).to.be.null;
+        done();
       });
     });
   });
 
-  describe('Allowed fields filtration', function() {
-    var middleware = Middleware.load(require('../middleware/filter-fields'));
-
-    it('handles show filtration based on scopes', function() {
+  describe("Allowed fields filtration", function () {
+    let middleware;
+    before(() => {
+      middleware = Middleware.load(require("../middleware/filter-fields"));
+    });
+    it("handles show filtration based on scopes", function () {
       var request = httpMocks.createRequest({
-        appliedScope: [ 'admin' ],
-        method: 'GET',
+        appliedScope: ["admin"],
+        method: "GET",
         controller: {
-          scopes: [ '*', 'owner', 'admin' ],
+          scopes: ["*", "owner", "admin"],
           _rest: true,
           permissions: {
             read: {
-              'admin': [ 'show' ]
-            }
-          }
+              admin: ["show"],
+            },
+          },
         },
         rawResources: {
-          _id: '11111',
+          _id: "11111",
           show: true,
-          dontShow: true
-        }
+          dontShow: true,
+        },
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function() {
-        expect(request).to.have.property('resource');
-        expect(request.resource).to.have.property('show');
-        expect(request.resource).to.have.property('_id');
-        expect(request.resource).to.not.have.property('dontShow');
+      middleware(request, response, function () {
+        expect(request).to.have.property("resource");
+        expect(request.resource).to.have.property("show");
+        expect(request.resource).to.have.property("_id");
+        expect(request.resource).to.not.have.property("dontShow");
       });
     });
 
-    it('handles index filtration based on scopes', function() {
+    it("handles index filtration based on scopes", function () {
       var request = httpMocks.createRequest({
-        appliedScope: [ 'admin' ],
-        method: 'GET',
+        appliedScope: ["admin"],
+        method: "GET",
         controller: {
-          scopes: [ '*', 'owner', 'admin' ],
+          scopes: ["*", "owner", "admin"],
           _rest: true,
           permissions: {
             read: {
-              'admin': [ 'show' ]
-            }
-          }
+              admin: ["show"],
+            },
+          },
         },
         rawResources: [
           {
-            _id: '11111',
+            _id: "11111",
             show: true,
-            dontShow: true
+            dontShow: true,
           },
           {
-            _id: '22222',
+            _id: "22222",
             show: true,
-            dontShow: true
-          }
-        ]
+            dontShow: true,
+          },
+        ],
       });
 
       var response = httpMocks.createResponse();
 
-      middleware(request, response, function() {
-        expect(request).to.have.property('resource');
+      middleware(request, response, function () {
+        expect(request).to.have.property("resource");
         expect(request.resource).to.be.instanceOf(Array);
-        expect(request.resource[0]).to.have.property('show');
-        expect(request.resource[0]).to.have.property('_id');
-        expect(request.resource[0]).to.not.have.property('dontShow');
+        expect(request.resource[0]).to.have.property("show");
+        expect(request.resource[0]).to.have.property("_id");
+        expect(request.resource[0]).to.not.have.property("dontShow");
       });
     });
   });
-
 });
 
-describe('[USER INTERFACE]', function() {
-
-  it('#start()', function() {
+describe("[USER INTERFACE]", function () {
+  it("#start()", function () {
     expect(Instance.start()).to.not.equal(false);
   });
-
 });
