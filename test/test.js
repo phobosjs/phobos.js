@@ -8,12 +8,20 @@ chai.use(require("chai-as-promised"));
 
 var expect = chai.expect;
 var httpMocks = require("node-mocks-http");
+var JWT = require("jsonwebtoken");
 var Phobos = require("../index");
 var Instance = new Phobos();
 var Router = require("../lib/router");
 
-var Bearer = new (require("../lib/bearer"))("phobos__test");
+var BearerLib = require("../lib/bearer");
+var Bearer = new BearerLib("phobos__test");
 var MiddlewareLoader = require("../lib/middleware-loader");
+var oneDaySeconds = 24 * 60 * 60;
+
+function tokenLifetimeSeconds(token) {
+  var decoded = JWT.decode(token);
+  return decoded.exp - decoded.iat;
+}
 
 Instance.addSchema(require("./support/sample_schema"));
 
@@ -51,6 +59,26 @@ describe("[LIBRARIES]", function () {
     it("generates and validates a given bearer token", function () {
       var token = Bearer.generate("__token__");
       expect(Bearer.verify(token)).to.equal("__token__");
+    });
+
+    it("defaults bearer tokens to a one-day lifetime", function () {
+      var token = Bearer.generate("__token__");
+      expect(tokenLifetimeSeconds(token)).to.equal(oneDaySeconds);
+    });
+
+    it("preserves an explicit bearer token lifetime", function () {
+      var bearer = new BearerLib("phobos__test", "7d");
+      var token = bearer.generate("__token__");
+      expect(tokenLifetimeSeconds(token)).to.equal(7 * oneDaySeconds);
+    });
+
+    it("defaults Phobos instance bearer tokens to a one-day lifetime", function () {
+      var instance = new Phobos({
+        bearerTokenSignature: "phobos__test",
+        testMode: true,
+      });
+      var token = instance.token.generate("__token__");
+      expect(tokenLifetimeSeconds(token)).to.equal(oneDaySeconds);
     });
   });
 
