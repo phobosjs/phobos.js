@@ -16,7 +16,7 @@
   "devDependencies": {
     "chai": "^3.4.1",
     "chai-as-promised": "^5.1.0",
-    "mocha": "^5.2.0",
+    "mocha": "^11.7.6",
     "node-mocks-http": "^1.7.0"
   },
   "dependencies": {
